@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NeoRide by Zelloufi — Motos électriques, scooters et pièces à Berkane et dans l’Oriental</title>
+<meta name="description" content="Découvrez les motos électriques, scooters et accessoires NeoRide by Zelloufi à Berkane. Comparez les modèles et contactez le showroom pour confirmer prix et disponibilité.">
+<meta name="theme-color" content="#121314">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23121314'/%3E%3Cpath d='M18 3L7 18h8l-2 11 12-17h-8z' fill='%232dff6e'/%3E%3C/svg%3E">
+<meta property="og:title" content="NeoRide by Zelloufi — Mobilité électrique à Berkane">
+<meta property="og:description" content="Comparez les modèles, explorez la mobilité électrique et contactez le showroom.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,600;1,800;1,900&family=DM+Sans:wght@400;500;700&family=Cairo:wght@600;800&family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#121314;--bg2:#1a1c1e;--line:#2e3236;--txt:#f2f4f3;--mut:#9aa2a9;--g:#2dff6e;--si:linear-gradient(175deg,#fff 10%,#aeb4ba 55%,#e8eaec 100%);
+/* Design tokens added without renaming the variables used by the existing UI. */
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-12:48px;--space-16:64px;--surface-1:var(--bg2);--surface-2:#212427;--text:var(--txt);--muted:var(--mut);--accent:var(--g);--radius:4px;--container:1120px;
+color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--txt);font:400 17px/1.65 "DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+
+h1,h2,h3,.logo,.num{font-family:"Exo 2","DM Sans",sans-serif;font-style:italic;font-weight:800;margin:0;line-height:1}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--g);outline-offset:3px}
+.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
+.si{background:var(--si);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:4px;font:700 16px "DM Sans",sans-serif;border:1.5px solid transparent;cursor:pointer;transition:background .2s,color .2s,border-color .2s;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.btn-g{background:var(--g);color:#05150b}.btn-g:hover{background:#fff}
+.btn-o{background:#ffffff1a;color:var(--txt)}.btn-o:hover{background:var(--txt);color:#000}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:#121314;border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;height:68px}
+.logo{font-size:27px;display:flex;align-items:baseline;gap:8px}.logo small{font-size:11px;color:var(--g);font-weight:800}
+nav{display:none;gap:28px;font-size:15px;color:var(--mut)}nav a:hover{color:var(--txt)}
+.bar .btn{min-height:42px;padding:0 18px;font-size:14px}
+@media(min-width:900px){nav{display:flex}}
+/* hero */
+.hero{position:relative;height:calc(100svh - 68px - env(safe-area-inset-top,0px));min-height:620px;overflow:hidden;clip-path:polygon(0 0,100% 0,100% 100%,0 calc(100% - 44px))}.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(18,19,20,.9),rgba(18,19,20,.55) 55%,transparent),linear-gradient(0deg,rgba(18,19,20,.92),transparent 50%)}
+#road{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero .wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:156px;pointer-events:none}
+.hero .wrap>*{pointer-events:auto}
+.spd{position:absolute;top:28px;right:0;text-align:end;pointer-events:none!important}
+.num{font-size:clamp(76px,22vw,200px);font-weight:900;color:#fff;text-shadow:0 4px 30px #000;font-variant-numeric:tabular-nums;transition:color .2s}
+.hero .num{color:#9aa2a9;transition:color .35s,text-shadow .35s}
+.hero.speed-mid .num{color:#fff;text-shadow:0 0 30px #ffffff35,0 4px 30px #000}
+.hero.speed-high .num{color:var(--g);text-shadow:0 0 34px #2dff6e66,0 4px 30px #000}
+.spd span{display:block;color:#e4e8ea;font-size:14px;margin-top:6px}
+.hero h1{font-size:clamp(34px,6.4vw,70px);max-width:15ch;line-height:1.04;padding-inline-end:6px}
+.hero p{color:#c3c9ce;max-width:50ch;margin:18px 0 26px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.thr{position:relative;display:inline-flex;align-items:center;gap:12px;min-height:50px;padding:0 24px 0 6px;border-radius:4px;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);background:#ffffff24;border:1px solid #ffffff33;color:var(--txt);font:700 15px "DM Sans",sans-serif;cursor:pointer;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+.thr i{width:38px;height:38px;border-radius:50%;background:var(--g);display:grid;place-items:center;transition:transform .15s}
+.thr svg{width:18px;fill:#05150b}
+.run .thr i{transform:scale(1.18);box-shadow:0 0 0 8px #2dff6e33}
+.trust{position:absolute;z-index:2;left:0;right:0;bottom:0;background:linear-gradient(0deg,#121314 30%,transparent);padding:30px 0 62px}
+.trust ul{list-style:none;margin:0 auto;padding:0;width:min(1120px,100% - 40px);display:flex;flex-wrap:wrap;gap:6px 28px;font-size:14px;font-weight:700;color:#d7dce0}
+.trust li::before{content:"";display:inline-block;width:8px;height:8px;margin-inline-end:9px;background:var(--g);transform:skew(-20deg)}
+/* sections */
+section{padding:clamp(52px,8vw,96px) 0}
+h2{font-size:clamp(34px,6vw,64px);margin-bottom:14px}
+.lead{color:var(--mut);max-width:56ch;margin:0 0 28px}
+/* catalog */
+.tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:8px;scrollbar-width:none}
+.tabs button{flex:none;background:#ffffff14;border:0;color:#d7dce0;font:700 15px "DM Sans",sans-serif;min-height:48px;padding:0 26px;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)}
+.tabs button[aria-pressed=true]{background:var(--g);color:#05150b}
+.mdl{position:relative;display:grid;gap:22px;padding:36px 0;border-top:1px solid var(--line)}
+.mdl[hidden]{display:none}
+.mdl::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:0;background:var(--g);transition:width .5s}
+.mdl:hover::before{width:100%}
+.mdl h3{font-size:clamp(30px,5vw,50px)}
+.pr{font:800 22px "Exo 2",sans-serif;font-style:italic;color:var(--g);margin-top:10px}
+.sp{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 24px;margin:0}
+.sp div{margin:0}
+.sp dd{margin:0;font:800 clamp(30px,4.6vw,44px)/1 "Exo 2",sans-serif;font-style:italic;background:var(--si);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sp dt{font-size:13px;color:var(--mut);margin-top:4px}
+.buy{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.stock{font-size:14px;font-weight:700;color:var(--g);display:flex;align-items:center;gap:8px}
+.stock::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g)}
+@media(min-width:900px){.mdl{grid-template-columns:1.1fr 1.5fr .9fr;align-items:center;gap:40px}.sp{grid-template-columns:repeat(4,1fr)}.sp.s3{grid-template-columns:repeat(3,1fr)}}
+.note{font-size:13px;color:var(--mut);margin-top:12px}
+.qz{max-width:760px}.qp{display:flex;gap:6px;margin-bottom:24px}.qp i{height:5px;flex:1;background:#ffffff1f;transform:skew(-20deg)}.qp i.on{background:var(--g)}.qq{font:800 clamp(26px,4.4vw,38px)/1.1 "Exo 2",sans-serif;font-style:italic;margin-bottom:22px}.qo{display:grid;gap:10px}.qo button{min-height:58px;text-align:start;padding:0 28px;background:#ffffff14;color:var(--txt);border:0;font:700 17px "DM Sans",sans-serif;cursor:pointer;clip-path:polygon(16px 0,100% 0,calc(100% - 16px) 100%,0 100%);transition:background .2s,color .2s}.qo button:hover{background:var(--g);color:#05150b}.qr h3{font-size:clamp(34px,6.5vw,60px);margin:8px 0 6px}.qr .sp{margin:26px 0}.snd{min-height:50px;background:none;border:0;color:#e4e8ea;font:700 14px "DM Sans",sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.lg{display:flex;gap:8px;align-items:center}.lang{min-height:42px;padding:0 14px;background:#ffffff1f;border:0;color:var(--txt);font:700 14px "Cairo","DM Sans",sans-serif;cursor:pointer;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}.lang:hover{background:var(--txt);color:#000}
+@media(max-width:560px){.logo{font-size:21px}.logo small{font-size:9px}.bar .btn{padding:0 12px;font-size:12px}.lang{padding:0 10px}}
+html[dir=rtl] body{font-family:"Cairo","DM Sans",sans-serif}html[dir=rtl] h1,html[dir=rtl] h2,html[dir=rtl] h3{font-family:"Cairo",sans-serif;font-style:normal;line-height:1.35}html[dir=rtl] .spd{right:auto;left:0;text-align:left}
+.mo{color:#c3c9ce;font-size:14px;margin-top:8px}
+.fin{display:grid;gap:36px;max-width:960px}@media(min-width:900px){.fin{grid-template-columns:1fr 1fr;align-items:center}}
+.fc label,.fl,.es label{display:flex;justify-content:space-between;font-weight:700;margin:22px 0 8px}.fc label:first-child{margin-top:0}.fc output{color:var(--g)}
+select,.fi{width:100%;min-height:52px;background:var(--bg2);border:1px solid #3a3f44;color:var(--txt);padding:0 14px;font:500 16px "DM Sans",sans-serif}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{min-height:48px;padding:0 24px;border:0;background:#ffffff14;color:var(--txt);font:700 15px "DM Sans",sans-serif;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)}.chips button[aria-pressed=true]{background:var(--g);color:#05150b}
+.fr>span{color:var(--mut)}.fr strong{display:block;font:900 clamp(46px,9vw,72px)/1.05 "Exo 2",sans-serif;font-style:italic;color:var(--g);margin:6px 0 4px}.fr strong small{font-size:.3em;color:var(--txt)}.fr .btn{margin-top:18px}
+.ph2{background:repeating-linear-gradient(135deg,#1a1c1e,#1a1c1e 12px,#212427 12px,#212427 24px);color:#c3c9ce;display:grid;place-items:center;text-align:center;font-size:14px;padding:12px}
+.nb{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0}.nb div{border-top:3px solid var(--g);padding-top:10px}.nb b{display:block;font:800 clamp(28px,6vw,48px)/1 "Exo 2",sans-serif;font-style:italic}.nb span{font-size:14px;color:var(--mut)}
+.rv{display:grid;gap:12px;margin:22px 0}@media(min-width:800px){.rv{grid-template-columns:1fr 1fr}}.rv blockquote{margin:0;padding:24px 32px;background:var(--bg2);clip-path:polygon(18px 0,100% 0,calc(100% - 18px) 100%,0 100%)}.rv p{margin:0 0 10px}.rv cite{font-style:normal;font-size:14px;color:var(--mut)}.stars{color:var(--g);letter-spacing:3px}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gal .ph2{height:clamp(90px,18vw,180px)}
+.pv{padding:16px 18px;background:var(--bg2);border-inline-start:4px solid var(--g);margin:26px 0 22px;color:#e4e8ea;font-size:15px}
+.gr{display:grid;gap:14px}@media(min-width:800px){.gr{grid-template-columns:repeat(2,1fr)}}.gr div{padding:20px 28px;background:var(--bg2);clip-path:polygon(16px 0,100% 0,calc(100% - 16px) 100%,0 100%)}.gr b{display:block;font-size:18px;margin-bottom:4px}.gr span{color:#c3c9ce;font-size:15px}
+.who{display:grid;gap:22px;align-items:center;max-width:880px}@media(min-width:700px){.who{grid-template-columns:210px 1fr}}.who .ph2{height:210px;clip-path:polygon(16px 0,100% 0,calc(100% - 16px) 100%,0 100%)}.who p{margin:10px 0 20px;color:#c3c9ce}
+.dock{display:none}@media(max-width:700px){body{padding-bottom:72px}.wa{display:none}.dock{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:70;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:#121314;border-top:1px solid var(--line)}.dock .btn{flex:1;min-height:50px;padding:0 10px}}
+.vl{display:flex;flex-wrap:wrap;gap:8px}.vl a{min-height:48px;display:inline-flex;align-items:center;padding:0 26px;background:#ffffff14;font-weight:700;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);transition:background .2s,color .2s}.vl a:hover{background:var(--g);color:#05150b}
+/* savings */
+.save{background:var(--bg2);clip-path:polygon(0 52px,100% 0,100% calc(100% - 52px),0 100%);padding:clamp(96px,12vw,140px) 0}
+.sv{display:grid;gap:56px}
+@media(min-width:900px){.sv{grid-template-columns:1.1fr 1fr;align-items:center}}
+.zero{font-size:clamp(70px,16vw,170px);font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+.zero small{font-size:.28em;letter-spacing:0;margin-inline-start:8px}
+.pt{display:grid;gap:18px;margin-top:30px}
+.pt p{margin:0;color:var(--mut);max-width:48ch}.pt b{color:var(--txt)}
+.calc label{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px}
+.calc output{color:var(--g)}
+input[type=range]{width:100%;accent-color:var(--g);height:34px;margin:0 0 20px}
+.row{display:grid;grid-template-columns:86px 1fr auto;gap:12px;align-items:center;font-size:14px;margin-bottom:10px}
+.track{height:10px;background:#ffffff14;overflow:hidden;transform:skew(-20deg)}
+.fill{height:100%;transition:width .4s}.f1{background:#7c848b}.f2{background:var(--g)}
+.big{margin-top:26px}.big span{color:var(--mut);font-size:15px}
+.big strong{display:block;font:900 clamp(44px,9vw,76px)/1.05 "Exo 2",sans-serif;font-style:italic;color:var(--g)}
+.tiny{font-size:12px;color:var(--mut);margin:14px 0 0}
+/* faq */
+.faq{max-width:820px}
+details{border-top:1px solid var(--line)}details:last-child{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:22px 44px 22px 0;font-weight:700;font-size:19px;position:relative;min-height:56px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";position:absolute;right:8px;top:30px;width:10px;height:10px;border:solid var(--g);border-width:0 2px 2px 0;transform:rotate(45deg);transition:transform .25s}
+details[open] summary::after{transform:rotate(225deg)}
+details p{margin:0 0 22px;color:var(--mut);max-width:62ch}
+/* footer */
+footer{padding:clamp(96px,12vw,140px) 0 110px;background:var(--bg2);clip-path:polygon(0 52px,100% 0,100% 100%,0 100%)}
+.ft{display:grid;gap:44px}
+@media(min-width:860px){.ft{grid-template-columns:1fr 1.2fr}}
+.info{display:grid;gap:20px;font-style:normal;margin-top:26px}
+.info b{display:block;color:var(--g);font-size:14px}
+.hrs{border-collapse:collapse;width:100%;max-width:340px;font-size:15px}
+.hrs td{padding:3px 0;color:var(--mut)}.hrs td:last-child{text-align:end;color:var(--txt)}
+.map{clip-path:polygon(30px 0,100% 0,calc(100% - 30px) 100%,0 100%);min-height:300px;border:1px dashed #50575e;background:repeating-linear-gradient(135deg,#17191b,#17191b 14px,#1d2023 14px,#1d2023 28px);display:grid;place-items:center;text-align:center;padding:20px}
+.map p{margin:0 0 16px;color:var(--mut)}
+.copy{margin-top:56px;color:var(--mut);font-size:14px}
+.wa{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:70;width:60px;height:60px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 8px 24px #0009}
+.wa svg{width:32px;height:32px;fill:#fff}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* Small, non-layout-changing accessibility safeguards. */
+:where(a,button,summary,input,select):focus-visible{outline:3px solid var(--g);outline-offset:3px}
+button:disabled{opacity:.55;cursor:not-allowed}
+
+
+/* Hero art direction: spacious, Tesla-inspired, with the playful accelerator kept secondary. */
+header{top:0}
+.hero{height:calc(100svh - 68px);min-height:650px;isolation:isolate;clip-path:none}
+.hero::after{background:linear-gradient(90deg,rgba(18,19,20,.94) 0%,rgba(18,19,20,.78) 46%,rgba(18,19,20,.18) 100%),linear-gradient(0deg,rgba(18,19,20,.94) 0%,transparent 54%)}
+.hero-layout{height:100%;position:relative;z-index:2;display:flex;align-items:center;padding-top:clamp(42px,7vh,84px);padding-bottom:clamp(132px,17vh,174px)}
+.hero .hero-copy{position:relative;z-index:3;width:min(100%,610px);margin-top:0}
+.hero .eyebrow{display:flex;gap:9px;align-items:center;color:var(--g);font-size:12px;font-weight:800;letter-spacing:.16em;margin:0 0 22px}
+.hero .eyebrow span{color:#fff;opacity:.55}
+.hero h1{font-size:clamp(42px,6.2vw,82px);max-width:10.5ch;line-height:.99;letter-spacing:-.035em;padding:0;margin:0}
+.hero .hero-lead{color:#d0d4d1;font-size:clamp(16px,1.45vw,19px);line-height:1.65;max-width:43ch;margin:22px 0 30px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.hero .cta .btn{min-height:54px;padding-inline:24px;font-size:15px}
+.hero .cta .btn-g{gap:12px;box-shadow:0 8px 28px rgba(45,255,110,.13)}
+.hero .cta .btn-g span{font-size:18px;line-height:1}
+.hero-interaction{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;max-width:600px;margin-top:30px;padding-top:18px;border-top:1px solid rgba(255,255,255,.16)}
+.interaction-copy{display:flex;align-items:center;gap:12px}
+.interaction-copy>span:last-child{display:flex;flex-direction:column;gap:2px}
+.interaction-icon{display:grid;place-items:center;width:38px;height:38px;border:1px solid rgba(45,255,110,.45);border-radius:50%;color:var(--g);font-size:24px}
+.interaction-copy strong{font-size:13px;font-weight:700;color:#f2f4f3}
+.interaction-copy small{font-size:12px;color:#9aa2a9}
+.interaction-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hero .thr{min-height:42px;padding:4px 14px 4px 5px;gap:9px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);font-size:12px;clip-path:none;border-radius:999px}
+.hero .thr i{width:30px;height:30px;flex:none}
+.hero .thr svg{width:15px}
+.hero .snd{min-height:38px;padding:0 4px;font-size:12px;color:#c3c9ce;text-decoration:none}
+.hero .snd::before{content:"◖";display:inline-block;margin-inline-end:6px;color:var(--g)}
+.hero .snd[aria-pressed="false"]{color:#ff7777;background:rgba(255,55,55,.10);border:1px solid rgba(255,75,75,.35);border-radius:999px;padding-inline:10px}
+.hero .snd[aria-pressed="false"]::before{content:"◖";color:#ff4b4b}
+.hero .snd[aria-pressed="true"]{color:#c3c9ce;border:1px solid transparent;border-radius:999px;padding-inline:10px}
+.hero .trust{z-index:4;padding:22px 0 30px;background:linear-gradient(0deg,#121314 15%,rgba(18,19,20,.65) 65%,transparent)}
+.hero .trust ul{width:min(1120px,100% - 40px);gap:10px 28px;color:#c9cfcb;font-size:12px;font-weight:500}
+.hero .trust li::before{width:5px;height:5px;border-radius:50%;transform:none;vertical-align:middle}
+.spd{top:34px;right:0;opacity:.78}
+.spd .num{font-size:clamp(70px,15vw,180px);color:rgba(255,255,255,.15);text-shadow:none}
+.spd span{color:rgba(255,255,255,.55);font-size:12px}
+@media(min-width:900px){.hero-layout{padding-top:28px}.hero .hero-copy{transform:translateY(-8px)}.hero .trust ul{font-size:13px}}
+@media(max-width:700px){.hero{height:auto;min-height:max(720px,calc(100svh - 68px));max-height:none}.hero-layout{height:auto;min-height:0;padding-top:70px;padding-bottom:208px;align-items:flex-start}.hero .hero-copy{width:100%;margin-top:0}.hero .eyebrow{font-size:10px;margin-bottom:18px}.hero h1{font-size:clamp(42px,12vw,62px);max-width:10ch}.hero .hero-lead{font-size:15px;line-height:1.6;margin:18px 0 24px;max-width:37ch}.hero .cta{display:grid;grid-template-columns:1fr;gap:10px;max-width:360px}.hero .cta .btn{width:100%;min-height:52px}.hero-interaction{align-items:flex-start;flex-direction:column;margin-top:24px;padding-top:16px;gap:12px}.interaction-controls{width:100%;justify-content:flex-start}.hero .trust{padding:18px 0 28px}.hero .trust ul{gap:8px 18px;font-size:11px;width:calc(100% - 40px)}.spd{top:10px;right:0}.spd .num{font-size:72px}.spd span{font-size:10px}.hero::after{background:linear-gradient(180deg,rgba(18,19,20,.65),rgba(18,19,20,.88) 38%,rgba(18,19,20,.97) 100%)}}
+@media(max-width:380px){.hero-layout{padding-top:62px}.hero h1{font-size:40px}.interaction-controls{gap:6px}.hero .thr{padding-inline-end:10px}.hero .snd{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.hero .btn,.hero .thr i{transition:none}}
+
+
+/* NeoRide electric immersion pass */
+.bar .wa-link{gap:9px;white-space:nowrap}
+.wa-mark{width:18px;height:18px;flex:none;fill:currentColor}
+@media(max-width:560px){.bar .wa-link{gap:7px;padding-inline:11px}.wa-mark{width:16px;height:16px}.bar .btn{font-size:12px}}
+/* The road opens up as acceleration rises; content recedes without disappearing. */
+.hero::after{transition:background .45s ease,opacity .45s ease}
+.hero.run::after{background:linear-gradient(90deg,rgba(18,19,20,.68),rgba(18,19,20,.27) 52%,rgba(18,19,20,.02)),linear-gradient(0deg,rgba(18,19,20,.72),transparent 55%)}
+.hero-copy .eyebrow,.hero-copy h1,.hero-copy .hero-lead,.hero-copy>.cta{transition:opacity .35s ease,transform .45s ease}
+.hero.run .hero-copy .eyebrow,.hero.run .hero-copy h1,.hero.run .hero-copy .hero-lead,.hero.run .hero-copy>.cta{opacity:.58;transform:translateY(3px)}
+.hero.run .hero-copy .hero-lead{opacity:.43}
+.hero.run #road{filter:saturate(1.16) brightness(1.1)}
+.hero #road{transition:filter .4s ease}
+/* Slider rails feel like a precision electric throttle, not browser defaults. */
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;touch-action:pan-y;outline:none;padding:0}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:99px;background:linear-gradient(90deg,#4d565d,#2dff6e);box-shadow:0 0 0 1px #ffffff0b}
+input[type=range]::-moz-range-track{height:5px;border-radius:99px;background:linear-gradient(90deg,#4d565d,#2dff6e);box-shadow:0 0 0 1px #ffffff0b}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:38px;height:30px;margin-top:-13px;border:0;border-radius:0;background-color:transparent;background-repeat:no-repeat;background-position:center;background-size:contain;filter:drop-shadow(0 0 5px #2dff6e70);transition:filter .2s,transform .2s}
+input[type=range]::-moz-range-thumb{width:38px;height:30px;border:0;border-radius:0;background-color:transparent;background-repeat:no-repeat;background-position:center;background-size:contain;filter:drop-shadow(0 0 5px #2dff6e70);transition:filter .2s,transform .2s}
+input[type=range]:hover::-webkit-slider-thumb,input[type=range]:focus-visible::-webkit-slider-thumb{filter:drop-shadow(0 0 9px #2dff6e);transform:translateY(-2px)}
+input[type=range]:hover::-moz-range-thumb,input[type=range]:focus-visible::-moz-range-thumb{filter:drop-shadow(0 0 9px #2dff6e);transform:translateY(-2px)}
+/* A tiny, custom electric scooter silhouette used as the range thumb. */
+input[type=range]::-webkit-slider-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 36'%3E%3Cg fill='none' stroke='%232dff6e' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10' cy='27' r='5'/%3E%3Ccircle cx='38' cy='27' r='5'/%3E%3Cpath d='M10 27h12l6-13h6l4 13M25 14h-7l-3 8M29 14l-3-5h-5M33 8h5'/%3E%3C/g%3E%3Cpath d='M20 9h7l4 5h-8z' fill='%23fff'/%3E%3C/svg%3E")}
+input[type=range]::-moz-range-thumb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 36'%3E%3Cg fill='none' stroke='%232dff6e' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10' cy='27' r='5'/%3E%3Ccircle cx='38' cy='27' r='5'/%3E%3Cpath d='M10 27h12l6-13h6l4 13M25 14h-7l-3 8M29 14l-3-5h-5M33 8h5'/%3E%3C/g%3E%3Cpath d='M20 9h7l4 5h-8z' fill='%23fff'/%3E%3C/svg%3E")}
+#km{margin-top:4px;margin-bottom:26px}
+#fa{margin-top:8px}
+@media(prefers-reduced-motion:reduce){.hero::after,.hero-copy .eyebrow,.hero-copy h1,.hero-copy .hero-lead,.hero-copy>.cta,#road,input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{transition:none}}
+
+
+/* Scroll-powered battery indicator */
+.scroll-battery{position:fixed;top:calc(env(safe-area-inset-top,0px) + 7px);left:50%;transform:translateX(-50%);z-index:101;display:flex;align-items:center;gap:7px;pointer-events:none;opacity:.92;mix-blend-mode:normal}
+.battery-label{font:800 8px/1 "DM Sans",sans-serif;letter-spacing:.18em;color:#c4cbc7}
+.battery-shell{position:relative;width:34px;height:16px;border:1.5px solid #bfc7c2;border-radius:3px;padding:2px;display:block;background:#121314b8}
+.battery-shell::after{content:"";position:absolute;right:-4px;top:4px;width:2px;height:6px;border-radius:0 2px 2px 0;background:#bfc7c2}
+.battery-fill{position:absolute;left:2px;top:2px;bottom:2px;width:0%;max-width:calc(100% - 4px);background:linear-gradient(90deg,#27bd58,#2dff6e);box-shadow:0 0 8px #2dff6e88;transition:width .12s linear}
+.battery-shell svg{position:absolute;z-index:1;inset:1px;width:12px;height:12px;left:10px;fill:#07140b;filter:drop-shadow(0 0 3px #2dff6e)}
+.header-wa{width:48px;min-width:48px;height:42px;padding:0!important;display:grid;place-items:center}
+.header-wa .wa-mark{width:22px;height:22px;fill:currentColor}
+/* FAQ opens like a fast, green charging pulse */
+#faq details{position:relative;isolation:isolate;overflow:hidden}
+#faq details::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;background:linear-gradient(105deg,transparent 0%,#2dff6e08 35%,#2dff6e1a 50%,transparent 67%);transform:translateX(-110%)}
+#faq details[open]::before{opacity:1;animation:faq-charge .85s ease-out both}
+#faq summary{padding-inline-start:36px}
+#faq summary::before{content:"";position:absolute;left:4px;top:23px;width:20px;height:24px;background:var(--g);clip-path:polygon(57% 0,14% 54%,43% 54%,32% 100%,86% 39%,56% 39%);filter:drop-shadow(0 0 0 transparent);opacity:.7;transition:opacity .2s,filter .25s,transform .25s}
+#faq details[open] summary::before{opacity:1;filter:drop-shadow(0 0 7px #2dff6e);animation:bolt-charge .55s ease-out}
+#faq details[open] summary{color:#fff;text-shadow:0 0 18px #2dff6e22}
+#faq details[open] p{animation:faq-answer .4s ease-out both}
+@keyframes bolt-charge{0%{transform:scale(.45) rotate(-24deg);filter:drop-shadow(0 0 0 #2dff6e)}45%{transform:scale(1.35) rotate(9deg);filter:drop-shadow(0 0 13px #2dff6e)}100%{transform:scale(1) rotate(0);filter:drop-shadow(0 0 7px #2dff6e)}}
+@keyframes faq-charge{0%{transform:translateX(-110%);opacity:0}25%{opacity:1}100%{transform:translateX(110%);opacity:0}}
+@keyframes faq-answer{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+/* Electric raceway below the footer */
+.rideout{position:relative;overflow:hidden;background:linear-gradient(180deg,#101213 0%,#13191a 100%);padding:44px 0 26px;border-top:1px solid #2dff6e26;min-height:190px}
+.rideout-sky{position:absolute;inset:0 0 38px;pointer-events:none;background:radial-gradient(ellipse at 50% 110%,#2dff6e13,transparent 62%)}
+.energy-streak{position:absolute;height:1px;background:linear-gradient(90deg,transparent,#2dff6e80,transparent);width:24%;animation:energy-flow 2.4s linear infinite}
+.streak-a{top:25%;left:-25%}.streak-b{top:53%;left:-35%;animation-delay:.7s;width:32%}.streak-c{top:73%;left:-25%;animation-delay:1.3s;width:18%}
+.rideout-road{height:108px;position:relative;display:flex;align-items:flex-end;border-bottom:3px solid #333b3e;background:linear-gradient(180deg,transparent 57%,#1a1e20 57%);perspective:500px}
+.rideout-road::before{content:"";position:absolute;left:0;right:0;bottom:19px;height:2px;background:repeating-linear-gradient(90deg,#e4e8ea 0 34px,transparent 34px 74px);opacity:.36;animation:road-markings .7s linear infinite}
+.rideout-road::after{content:"";position:absolute;z-index:4;left:73%;right:3%;bottom:3px;height:12px;background:repeating-conic-gradient(#e8eeea 0% 25%,#17191b 0% 50%) 50%/12px 12px;transform:perspective(100px) rotateX(8deg);transform-origin:bottom center;box-shadow:0 0 12px #2dff6e28;opacity:.95}
+.rider{position:absolute;bottom:12px;width:clamp(132px,19vw,196px);color:#dce4e0;filter:drop-shadow(0 5px 5px #0009) drop-shadow(0 0 10px #2dff6e26)}
+.rider svg{display:block;width:100%;height:auto;overflow:visible}.rider-scooter{animation:scooter-race 10s cubic-bezier(.4,0,.6,1) infinite;z-index:2}.rider-ebike{animation:ebike-race 11s cubic-bezier(.4,0,.6,1) infinite;z-index:1;transform:scale(.86);transform-origin:bottom center;color:#aeb8b2}
+.rideout-caption{display:flex;justify-content:space-between;gap:16px;padding:18px 20px 0;color:#aeb8b2;font-size:11px;font-weight:800;letter-spacing:.18em}.rideout-caption b{color:var(--g);font-size:16px}
+@keyframes scooter-race{0%{left:-210px;transform:translateY(0)}15%{transform:translateY(-3px)}35%{transform:translateY(0)}55%{transform:translateY(-2px)}75%{transform:translateY(0)}100%{left:calc(100% + 210px);transform:translateY(-1px)}}
+@keyframes ebike-race{0%{left:-230px;transform:scale(.86) translateY(0)}18%{transform:scale(.86) translateY(-2px)}42%{transform:scale(.86) translateY(0)}67%{transform:scale(.86) translateY(-2px)}100%{left:calc(100% + 230px);transform:scale(.86) translateY(0)}}
+@keyframes road-markings{to{background-position:-74px 0}}
+@keyframes energy-flow{to{transform:translateX(560%)}}
+@media(max-width:560px){.battery-label{display:none}.scroll-battery{left:50%;top:calc(env(safe-area-inset-top,0px) + 5px);transform:translateX(-50%)}.rideout{padding-top:32px}.rideout-road{height:88px}.rider{bottom:13px}.rideout-caption{font-size:10px;letter-spacing:.12em;padding-inline:14px}}
+@media(prefers-reduced-motion:reduce){#faq details[open]::before,#faq details[open] summary::before,#faq details[open] p,.energy-streak,.rideout-road::before{animation:none!important}.rideout-road::before{background-position:0 0}}
+/* Keep the signature rideout moving even when reduced-motion is enabled elsewhere. */
+.rideout .rider-scooter,.rideout .rider-ebike{will-change:left,transform}
+
+
+/* Arabic RTL refinements: keep visual indicators and numeric controls stable. */
+html[dir="rtl"] .scroll-battery{direction:ltr;flex-direction:row;unicode-bidi:isolate}
+html[dir="rtl"] .battery-shell{direction:ltr;flex-shrink:0}
+html[dir="rtl"] .battery-shell svg{left:10px;right:auto;direction:ltr}
+html[dir="rtl"] .battery-fill{left:2px;right:auto}
+html[dir="rtl"] .battery-shell::after{right:-4px;left:auto}
+html[dir="rtl"] .spd{right:auto;left:0;text-align:start;direction:ltr}
+html[dir="rtl"] input[type="range"],html[dir="rtl"] select,html[dir="rtl"] .sp dd,html[dir="rtl"] .pr,html[dir="rtl"] .fr strong{direction:ltr;unicode-bidi:isolate}
+html[dir="rtl"] .trust ul{padding-inline-end:0}
+html[dir="rtl"] .gr>div{border-inline-start:0;border-inline-end:2px solid #68716b;padding-inline-start:0;padding-inline-end:16px}
+html[dir="rtl"] .pv{border-inline-start:0;border-inline-end:4px solid var(--g)}
+html[dir="rtl"] .product-actions .btn,html[dir="rtl"] .cta .btn{direction:rtl}
+html[dir="rtl"] .rideout-caption{direction:ltr}
+
+</style>
+<style>
+section[id]{scroll-margin-top:86px}
+.catalog-intro{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:24px}
+.catalog-intro .lead{margin-bottom:0}.catalog-proof{font-size:12px;color:var(--mut);max-width:210px}
+.mdl{grid-template-columns:1fr;gap:18px;padding:28px 0}
+.product-visual{position:relative;overflow:hidden;aspect-ratio:16/9;background:#202426;border:1px solid #ffffff12;isolation:isolate}
+.product-visual img{width:100%;height:100%;display:block;object-fit:cover;filter:saturate(.78) contrast(1.04);transition:transform .55s ease,filter .4s ease}
+.mdl:hover .product-visual img{transform:scale(1.035);filter:saturate(1) contrast(1.04)}
+.product-visual::after{content:""}
+.product-body{display:flex;flex-direction:column;gap:4px}.product-kicker{font-size:10px;color:var(--g);letter-spacing:.15em;font-weight:800;text-transform:uppercase}
+.product-price-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px}.product-price-row .pr{margin-top:8px}
+.buy .btn{width:100%}.buy .stock{font-size:11px;color:#c2c9c4;font-weight:500}.buy .stock::before{background:#f5c76c;box-shadow:none}
+.product-actions{display:grid;gap:8px}.product-actions .btn-o{min-height:44px;font-size:13px}
+@media(min-width:900px){.mdl{grid-template-columns:minmax(220px,.92fr) minmax(240px,1.15fr) minmax(180px,.7fr);gap:26px}.product-visual{aspect-ratio:4/3}.product-actions{align-items:stretch}.product-actions .btn{padding-inline:14px;font-size:13px}.catalog-intro{margin-bottom:32px}}
+#catalogue .note{padding:12px 14px;border-inline-start:2px solid var(--g);background:#ffffff06;line-height:1.55}
+.conversion-strip{display:grid;gap:12px;margin:28px 0 8px;padding:20px;border:1px solid #2dff6e35;background:linear-gradient(120deg,#2dff6e0c,transparent 70%)}
+.conversion-strip strong{font-size:16px}.conversion-strip p{margin:3px 0 0;color:var(--mut);font-size:13px}.conversion-strip .btn{justify-self:start}
+@media(min-width:700px){.conversion-strip{grid-template-columns:1fr auto;align-items:center}.conversion-strip .btn{grid-column:2;grid-row:1/3}}
+.proof-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:28px}
+.proof-card{overflow:hidden;border:1px solid var(--line);background:#17191b}.proof-card img{width:100%;height:190px;object-fit:cover;display:block;filter:saturate(.78)}.proof-card div{padding:18px}.proof-card h3{font-size:22px;margin-bottom:9px}.proof-card p{margin:0;color:var(--mut);font-size:14px}.proof-label{display:inline-block;margin-bottom:10px;color:var(--g);font-size:10px;font-weight:800;letter-spacing:.12em}
+@media(min-width:700px){.proof-grid{grid-template-columns:repeat(3,1fr)}.proof-card img{height:220px}}
+.proof-disclaimer{margin-top:18px;color:var(--mut);font-size:12px;max-width:75ch}
+.map{position:relative;overflow:hidden;display:block;min-height:320px;padding:0;clip-path:none;border:1px solid #ffffff1a;background:#1b1f20}
+.map iframe{display:block;width:100%;height:320px;border:0;filter:grayscale(.8) invert(.88) contrast(.86)}
+.map-overlay{position:absolute;left:14px;right:14px;bottom:14px;padding:14px;background:#111514ed;border:1px solid #ffffff1b;backdrop-filter:blur(10px)}.map-overlay p{margin:0 0 10px;font-size:12px}.map-overlay strong{display:block;color:#fff;font-size:15px;margin-bottom:3px}
+#confiance .trust-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+#parler .who .ph2{overflow:hidden;padding:0;min-height:220px;background:#202426}
+#parler .who .ph2 img{width:100%;height:100%;min-height:220px;object-fit:cover;display:block}
+#garanties .gr>div{border-inline-start:2px solid #68716b;padding-inline-start:16px}
+#garanties .gr b{display:block}.gr span{display:block;color:var(--mut);font-size:14px;margin-top:5px}
+@media(prefers-reduced-motion:reduce){.product-visual img{transition:none}}
+/* mockup v5 fixes */
+@media(max-width:560px){.hero{min-height:700px}.hero h1{font-size:clamp(28px,8.4vw,36px);max-width:none}}
+.skip{position:absolute;left:16px;top:-80px;z-index:200;background:var(--g);color:#05150b;padding:12px 16px;font-weight:700}.skip:focus{top:16px}
+.btn:focus-visible,.chips button:focus-visible,.tabs button:focus-visible,.qo button:focus-visible,.lang:focus-visible,.thr:focus-visible,.vl a:focus-visible{clip-path:none}
+.hero h1{max-width:20ch}.info a{text-decoration:underline;text-underline-offset:4px}
+.rideout.paused *{animation-play-state:paused!important}
+.rpause{min-height:44px;background:none;border:0;color:#d7dce0;font:700 12px "DM Sans",sans-serif;text-decoration:underline;text-underline-offset:4px;cursor:pointer;letter-spacing:0}
+@media(prefers-reduced-motion:reduce){.rideout *{animation-play-state:paused!important}}
+.dock{display:none}@media(max-width:700px){body{padding-bottom:72px}.dock{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:70;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:#121314;border-top:1px solid var(--line)}.dock .btn{flex:1;min-height:50px;padding:0 10px}}
+/* mockup v6: swipe cards, compare, rideout fix, perf */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main section:not(#catalogue){content-visibility:auto;contain-intrinsic-size:auto 640px}
+.carbar{display:flex;align-items:center;gap:16px;margin:8px 0 12px}.carhint{color:var(--mut);font-size:13px;flex:1}#cpos{font:800 14px "Exo 2",sans-serif;font-style:italic}.carbtns{display:flex;gap:8px;margin-inline-start:auto}
+.carbtns button{min-width:48px;min-height:48px;background:#ffffff14;border:0;color:var(--txt);font-size:20px;cursor:pointer;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);transition:background .15s}.carbtns button:hover:not(:disabled){background:var(--g);color:#05150b}.carbtns button:disabled{opacity:.35;cursor:default}.carbtns button:focus-visible{clip-path:none}
+#list{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 20px;margin-inline:-2px;scrollbar-width:none;overscroll-behavior-x:contain;min-height:560px;-webkit-overflow-scrolling:touch}#list::-webkit-scrollbar{display:none}#list:focus-visible{outline-offset:-3px}
+#list .mdl{flex:0 0 min(84vw,340px);scroll-snap-align:start;display:flex;flex-direction:column;gap:16px;padding:0 0 20px;border:1px solid #ffffff14;background:var(--bg2);clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%)}
+#list .mdl[hidden]{display:none}#list .mdl>:not(.product-visual){padding-inline:20px}#list .mdl .product-visual{aspect-ratio:16/10;border:0}#list .sp,#list .sp.s3{grid-template-columns:repeat(2,1fr)}#list .mdl::before{top:0}
+.cmp-btn.sel{background:var(--g);color:#05150b}
+.ctray{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:80;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;background:var(--bg2);border:1px solid var(--g);width:min(640px,100% - 24px)}.ctray[hidden]{display:none}.ctray strong{font-size:14px}.ctl{color:var(--mut);font-size:13px}.ctray .btn{min-height:44px;margin-inline-start:auto}.ctray .btn:disabled{opacity:.4;pointer-events:none}.ctx{min-width:44px;min-height:44px;background:#ffffff14;border:0;color:var(--txt);cursor:pointer}
+@media(max-width:700px){.ctray{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+dialog.cd{border:1px solid #ffffff24;background:var(--bg2);color:var(--txt);padding:20px;width:min(720px,100% - 24px);max-height:calc(100svh - 24px);overflow:auto;margin:auto}dialog.cd::backdrop{background:rgba(5,8,6,.8)}
+.cdh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.cdh h2{font-size:clamp(28px,5vw,40px);margin:0}.cdx{min-width:44px;min-height:44px;background:#ffffff14;border:0;color:var(--txt);font-size:18px;cursor:pointer}
+.cdsel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}.cdsel select{width:100%}
+.cmpt{width:100%;border-collapse:collapse;font-size:15px}.cmpt th,.cmpt td{padding:12px 8px;border-bottom:1px solid #ffffff14;text-align:start;vertical-align:top}.cmpt thead th{font:800 15px "Exo 2",sans-serif;font-style:italic}.cmpt tbody th{color:var(--mut);font-weight:500;width:32%}.cmpt .win{color:var(--g);font-weight:700}.cmpt .win::after{content:" ✓"}
+.cdsum{margin:16px 0 0;color:#d7dce0}.cdf{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.rideout.off *{animation-play-state:paused!important}
+/* mockup v7 */
+.rideout .rider-scooter,.rideout .rider-ebike{animation:none!important;left:-240px}
+.art{display:block;width:100%}.art svg,.product-visual svg{display:block;width:100%;height:100%}.proof-card .art{height:190px}.who .ph2 .art{height:100%}@media(min-width:700px){.proof-card .art{height:220px}}
+.steps{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:12px}@media(min-width:800px){.steps{grid-template-columns:repeat(3,1fr)}}.steps li{padding:20px 24px;background:var(--bg2);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);display:grid;gap:4px}.stn{font:900 40px/1 "Exo 2",sans-serif;font-style:italic;color:var(--g)}.steps b{font-size:20px}.steps li>span:last-child{color:#c3c9ce}
+.arr{display:inline-block}.carhint::after{content:" →"}
+html[dir=rtl] *{letter-spacing:normal!important;text-transform:none!important}
+html[dir=rtl] body :not(.logo):not(.logo *){font-style:normal!important}
+html[dir=rtl] :is(.pr,.sp dd,.zero,.big strong,.fr strong,#fao,#kmo,#t1,#t2,.num,.cmpt td,#cpos,.mo,.stn){unicode-bidi:plaintext}
+html[dir=rtl] .spd{right:auto;left:0;text-align:left}
+html[dir=rtl] .carbtns svg,html[dir=rtl] .arr{transform:scaleX(-1)}
+html[dir=rtl] .carhint::after{content:" ←"}
+@media(max-width:700px){.dock{transform:translateY(110%);transition:transform 150ms cubic-bezier(.16,1,.3,1)}.dock.on{transform:none}}
+/* mockup v8: icon spec tiles + persistent compare tray */
+.spx{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.spx .st{display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;padding:12px;background:#ffffff0a;border:1px solid #ffffff12}
+.st svg{grid-row:1/3;color:var(--g)}
+.st b{font:800 22px/1.05 "Exo 2",sans-serif;font-style:italic;background:var(--si);-webkit-background-clip:text;background-clip:text;color:transparent}
+.st span{font-size:12px;color:var(--mut);line-height:1.3}
+.st .mt{grid-column:1/-1;display:block;height:3px;margin-top:10px;background:#ffffff1a;transform:skew(-20deg)}
+.st .mt b{display:block;height:100%;background:var(--g);font-size:0;-webkit-background-clip:border-box;background-clip:border-box}
+html[dir=rtl] .st b{unicode-bidi:plaintext}html[dir=rtl] .st .mt{transform:skew(20deg)}
+.ctray{display:grid;gap:8px;padding:10px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.ctslots{display:flex;align-items:center;gap:6px;min-width:0}.ctvs{font:900 12px "Exo 2",sans-serif;font-style:italic;color:var(--g)}
+.cts{flex:1;min-width:0;display:flex;align-items:center;gap:8px;min-height:52px;padding-inline-start:8px;background:#ffffff0f}
+.cth{width:44px;height:28px;flex:none;overflow:hidden;background:#1a1d1f}.cth svg{width:100%;height:100%;display:block}
+.cts b{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctrm{flex:none;min-width:44px;min-height:44px;background:none;border:0;color:var(--mut);cursor:pointer;font-size:14px}.ctrm:hover{color:var(--txt)}
+.cte{color:var(--mut);font-size:13px}
+.ctact{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.ctact .btn{min-height:44px;margin:0;padding:0 18px;font-size:14px}.ctact .btn[hidden]{display:none}
+body.hastray{padding-bottom:160px}
+@media(max-width:700px){.ctray{bottom:calc(16px + env(safe-area-inset-bottom,0px))}body.dockon .ctray{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+/* mockup v9: conversion upgrades */
+.product-price-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.vocal{display:flex;gap:8px;align-items:flex-start;margin:12px 0 0;color:#c3c9ce;font-size:14px;line-height:1.5}a.vocal{text-decoration:underline;text-underline-offset:4px}a.vocal:hover{color:var(--g)}
+.live{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 16px;padding:12px 16px;background:var(--bg2);border-inline-start:4px solid var(--g);font-size:14px}.live::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g)}.live strong{color:var(--g)}.live.closed{border-color:#ff6b6b}.live.closed::before{background:#ff6b6b;box-shadow:0 0 10px #ff6b6b}.live.closed strong{color:#ff9a9a}
+.reco{margin:12px 0 0;font-size:14px;color:#d7dce0}#trajets{margin-bottom:16px}#trajets button{min-height:44px;padding:0 16px;font-size:14px}
+.extra{margin-top:48px;display:grid;gap:8px}.chg h3{font-size:clamp(24px,4vw,34px);margin:40px 0 16px}
+.conversion-strip.pro{margin:0;border-color:#2dff6e66;background:linear-gradient(120deg,#2dff6e1a,transparent 70%)}.conversion-strip.pro strong{font-size:18px;line-height:1.35}.conversion-strip.pro p{font-size:15px;color:#c3c9ce}
+/* mockup v10 */
+.vocal{display:flex;align-items:center;gap:10px;margin:14px 0 0;padding:10px 14px;background:#ffffff0d;border:1px solid #ffffff1a;color:#d7dce0;font-size:14px;line-height:1.45;max-width:fit-content}
+.vic{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#2dff6e1f;color:var(--g)}.vic svg{width:18px;height:18px}
+#trajets button{display:inline-flex;align-items:center;gap:8px}#trajets svg{flex:none}
+.conversion-strip.pro strong{display:flex;gap:10px;align-items:flex-start}.ic{flex:none;color:var(--g);display:grid;place-items:center;padding-top:2px}
+.snd{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid transparent;background:#ffffff0d;text-decoration:none;color:#e4e8ea;transition:color .15s,border-color .15s,background .15s}
+.snd.on{color:var(--g);border-color:#2dff6e66}.snd.off{color:#ff8c8c;border-color:#ff6b6b99;background:#ff6b6b14}.snd .x{display:none}.snd.off .x{display:inline}.snd.off .w{display:none}
+/* ===== v11 REDESIGN: restraint, one display voice, numbered chapters ===== */
+:root{--sec-pad:clamp(72px,10vw,128px)}
+html:not([dir=rtl]) :is(h1,h2,h3,.pr,.sp dd,.st b,.stn,.num,.qq,.cmpt thead th,.big strong,.zero){font-family:"Bricolage Grotesque","DM Sans",sans-serif;font-style:normal;letter-spacing:-.03em}
+html:not([dir=rtl]) .logo{font-family:"Exo 2",sans-serif;font-style:italic}
+main{counter-reset:sec}main>section{counter-increment:sec;padding-block:var(--sec-pad)}
+main>section h2::before{content:counter(sec,decimal-leading-zero) " —";display:block;margin-bottom:14px;font:500 13px/1 "DM Sans",sans-serif;letter-spacing:.14em;color:var(--mut)}
+h2{font-size:clamp(2.1rem,5.2vw,3.75rem);line-height:1.04;font-weight:700;margin-bottom:var(--s4)}
+.sub{font-size:clamp(1.5rem,3vw,2rem);margin:56px 0 20px;font-weight:700}
+.lead{color:var(--mut);max-width:52ch}
+.hero h1{font-weight:800;max-width:16ch}.hero-lead{max-width:46ch}
+.link{display:inline-flex;align-items:center;gap:8px;min-height:48px;font-weight:700;color:#e4e8ea;border-bottom:1px solid #ffffff44}.link:hover{color:var(--g);border-color:var(--g)}
+@media(min-width:900px){.hero-interaction{position:absolute;inset-inline-end:0;bottom:96px;width:min(300px,28%)}}
+.scroll-battery,.catalog-proof{display:none!important}
+.st svg,.ic,.vic{color:#aeb8b2}.vic{background:#ffffff10}
+.stn{color:transparent;-webkit-text-stroke:1.5px #9aa2a9}
+.product-kicker,.eyebrow{color:var(--mut)}
+.trust li::before{background:#9aa2a9}
+.conversion-strip.pro{background:var(--bg2);border-color:#ffffff1f}
+.steps li,.gr div,.rv blockquote{clip-path:none;border:1px solid #ffffff14;background:transparent}
+.orient{margin-top:64px;padding-top:40px;border-top:1px solid #ffffff1f}.orient .live{margin-top:16px}
+</style>
+</head>
+<body>
+<a class="skip" href="#top">Aller au contenu</a>
+<div class="scroll-battery" id="scrollBattery" aria-hidden="true">
+ <span class="battery-label">CHARGING</span><span class="battery-shell"><span class="battery-fill" id="batteryFill"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 2 5.8 13h5l-.8 9L18.5 10h-5.2z"/></svg></span>
+</div>
+
+<header>
+ <div class="wrap bar">
+  <a href="#top" class="logo" aria-label="NeoRide by Zelloufi"><span class="si">NeoRide</span><small>by ZELLOUFI</small></a>
+  <nav aria-label="Navigation principale"><a href="#catalogue">Catalogue</a><a href="#catalogue" data-tab="piece">Pièces &amp; Accessoires</a><a href="#electrique">Pourquoi l’Électrique</a><a href="#localisation">Localisation</a></nav>
+  <div class="lg"><button id="lang" class="lang" type="button" aria-label="Changer de langue / تغيير اللغة">عربية</button><a class="btn btn-g wa-link header-wa" aria-label="Commander sur WhatsApp" title="Commander sur WhatsApp" data-msg="Bonjour NeoRide, je souhaite commander / avoir des informations."><svg class="wa-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2a9.8 9.8 0 0 0-8.35 14.94L2.4 22l5.22-1.37A9.9 9.9 0 1 0 12.04 2Zm0 17.98a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.1.81.83-3.02-.2-.31a8.1 8.1 0 1 1 6.9 3.83Zm4.45-6.07c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.95-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.49.1-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.4h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.1.15 1.52.09.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg></a></div>
+ </div>
+</header>
+
+<main id="top">
+<div class="hero" id="hero">
+ <canvas id="road" aria-hidden="true"></canvas>
+ <div class="wrap hero-layout">
+<div aria-hidden="true" class="spd"><div class="num" id="n">0</div><span>km/h</span></div>
+<div class="hero-copy">
+<p class="eyebrow">NEORIDE BY ZELLOUFI <span>·</span> BERKANE</p>
+<h1 class="si">Motos &amp; scooters électriques à Berkane et dans l’Oriental.</h1>
+<p class="hero-lead">Découvrez les motos et scooters électriques, avec un accompagnement local à Berkane et dans l’Oriental.</p>
+<div class="cta">
+<a class="btn btn-g" href="#catalogue">Découvrir le catalogue <span class="arr" aria-hidden="true">↗</span></a>
+<a class="link" href="#essai">Réserver un essai <span class="arr" aria-hidden="true">→</span></a>
+</div>
+<div class="hero-interaction">
+<div class="interaction-copy"><span class="interaction-icon" aria-hidden="true">↯</span><span><strong>Essayez l’expérience électrique</strong><small>Maintenez pour accélérer</small></span></div>
+<div class="interaction-controls"><button aria-label="Maintenir pour accélérer" class="thr" id="thr" type="button"><i><svg viewbox="0 0 24 24"><path d="M13 2L5 14h6l-1 8 9-13h-6z"></path></svg></i><span>Maintenir pour accélérer</span></button><button class="snd on" id="snd" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="w" d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg><span id="sndt">Son activé</span></button></div>
+</div>
+</div>
+</div>
+<div class="trust"><ul><li>Modèles dès 5 200 DH</li><li>Pièces de rechange</li><li>Service après-vente local</li><li>Conseils à Berkane et dans l’Oriental</li></ul></div>
+</div>
+
+<section id="catalogue">
+ <div class="wrap">
+  <div class="catalog-intro"><div><p class="product-kicker">TROUVEZ VOTRE PROCHAINE MOBILITÉ</p><h2 class="si">Le catalogue</h2><p class="lead">Comparez les modèles, repérez les caractéristiques qui comptent pour vos trajets, puis demandez une confirmation sur WhatsApp.</p></div><p class="catalog-proof">Trouvez le modèle adapté à vos trajets et à votre budget.</p></div>
+  <div class="tabs" role="group" aria-label="Filtrer par catégorie">
+   <button aria-pressed="true" data-f="all">Toutes</button><button aria-pressed="false" data-f="moto">Motos Électriques</button><button aria-pressed="false" data-f="scoot">Trottinettes &amp; Scooters</button><button aria-pressed="false" data-f="piece">Casques &amp; Pièces</button>
+  </div>
+  <div class="carbar"><span id="cpos" aria-live="polite"></span><span class="carhint" id="chint">Glissez pour voir les modèles</span><div class="carbtns"><button type="button" id="cprev" aria-label="Modèle précédent"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></button><button type="button" id="cnext" aria-label="Modèle suivant"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></button></div></div>
+  <div id="list" role="region" aria-roledescription="carrousel" aria-label="Modèles NeoRide" tabindex="0"></div>
+  <p class="vocal"><span class="vic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></span><span>Réponse rapide — vous pouvez écrire ou envoyer un message vocal (audio) sur WhatsApp.</span></p>
+  <div class="conversion-strip"><div><strong>Vous hésitez entre deux modèles ?</strong><p>Envoyez-nous votre trajet quotidien et votre budget. On vous aidera à comparer les options disponibles.</p></div><a class="btn btn-g wa-link" data-msg="Bonjour NeoRide, pouvez-vous m’aider à choisir une moto électrique selon mon budget et mes trajets ?">M’aider à choisir <span class="arr" aria-hidden="true">↗</span></a></div>
+   </div>
+</section>
+
+<section id="quiz"><div class="wrap"><h2 class="si">Trouvez votre NeoRide en 3 questions</h2><p class="lead">Vos trajets, votre style, votre budget : on vous indique le modèle qui vous correspond.</p><div class="qz" id="qz"></div></div></section>
+
+<section class="save" id="electrique">
+ <div class="wrap sv">
+  <div>
+   <div class="zero si">0<small>DH d’essence</small></div>
+   <h2 class="si" style="font-size:clamp(26px,4vw,40px)">Chaque kilomètre vous coûte presque rien.</h2>
+   <div class="pt">
+    <p><b>Entretien minimal.</b> Ni vidange, ni bougies, ni courroie : on passe moins de temps à l’atelier.</p>
+    <p><b>Silence et puissance.</b> La poussée est immédiate dès que vous tournez la poignée, sans bruit ni fumée.</p>
+   </div>
+  </div>
+  <div class="calc" aria-live="polite">
+   <div class="fl">Trajet type</div><div class="chips" id="trajets" role="group" aria-label="Trajets types"><button type="button" aria-pressed="false" data-km="15"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V10l6-3v14M10 21V5l10 4v12M2 21h20M13 12h4M13 16h4"/></svg><span>Berkane Ville (15 km)</span></button><button type="button" aria-pressed="false" data-km="35"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21L10 3M17 21L14 3M12 5v3M12 11v3M12 17v3"/></svg><span>Berkane ↔ Ahfir (35 km)</span></button><button type="button" aria-pressed="false" data-km="50"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="17" cy="6" r="2.5"/><path d="M2 14c2.5-2 5-2 7.5 0s5 2 7.5 0 3.5-1.5 5-1M2 19c2.5-2 5-2 7.5 0s5 2 7.5 0 3.5-1.5 5-1"/></svg><span>Berkane ↔ Saïdia (50 km)</span></button><button type="button" aria-pressed="false" data-km="85"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8L5 8zM9 8V6a3 3 0 016 0v2"/></svg><span>Livreur / Intensif (85 km)</span></button></div>
+   <label for="km">Vos trajets par jour <output id="kmo">30 km</output></label>
+   <input id="km" type="range" min="5" max="120" value="30" step="5">
+   <div class="row"><span>Thermique</span><div class="track"><div class="fill f1" id="b1" style="width:100%"></div></div><b id="t1"></b></div>
+   <div class="row"><span>Électrique</span><div class="track"><div class="fill f2" id="b2"></div></div><b id="t2"></b></div>
+   <div class="big"><span>Économie estimée par an</span><strong id="sav"></strong></div><p class="reco" id="reco" aria-live="polite"></p>
+   <p class="tiny">Estimation : thermique 3,5 L/100 km, essence 13 DH/L, entretien 0,15 DH/km ; électrique 0,05 DH/km de recharge et 0,03 DH/km d’entretien.</p>
+  </div>
+ </div>
+ <div class="wrap extra">
+  <aside class="conversion-strip pro" aria-labelledby="prot"><div><strong id="prot"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M9 17h5l3-9M6 17l2-5h4M16 8h3"/></svg></span>Vous êtes livreur (Glovo, resto, coursier) à Berkane, Oujda ou Nador ?</strong><p>Arrêtez de brûler 40 à 60 DH d’essence par jour (~1 500 DH/mois). Une NeoRide électrique vous coûte moins de 5 DH de charge par jour : votre moto se rentabilise avec vos économies d’essence.</p></div><a class="btn btn-g wa-link" data-msg="Bonjour NeoRide, je suis livreur et je veux calculer la rentabilité d’une moto électrique pour mon travail.">Calculer ma rentabilité</a></aside>
+  <div class="chg"><h3 class="si">Rechargez comme un téléphone</h3><ol class="steps"><li><span class="stn">1</span><b>Déclipsez en 10 sec</b><span>Batterie à poignée ergonomique</span></li><li><span class="stn">2</span><b>Montez-la chez vous</b><span>Appartement, bureau ou café — plus besoin de prise au garage</span></li><li><span class="stn">3</span><b>Branchez sur prise 220V</b><span>Charge complète pour ~2 à 3 DH d’électricité</span></li></ol></div>
+ </div>
+</section>
+
+<section id="confiance"><div class="wrap"><p class="product-kicker">LA CONFIANCE, SANS PROMESSES VIDES</p><h2 class="si">Venez voir. Posez vos questions. Décidez sereinement.</h2><p class="lead">Découvrez les modèles de près, échangez avec notre équipe et trouvez la solution qui correspond à votre quotidien.</p><div class="proof-grid"><article class="proof-card"><div class="art" role="img" aria-label="Moto exposée, visuel d’inspiration" data-k="moto"></div><div><span class="proof-label">NOS MODÈLES</span><h3>Les modèles en vrai</h3><p>Découvrez une sélection de véhicules pensés pour simplifier vos déplacements en ville et au quotidien.</p></div></article><article class="proof-card"><div class="art" role="img" aria-label="Détail de moto, visuel d’inspiration" data-k="scoot"></div><div><span class="proof-label">DANS LES DÉTAILS</span><h3>Les détails qui rassurent</h3><p>Comparez les équipements, les caractéristiques et les options pour choisir le modèle qui vous convient.</p></div></article><article class="proof-card"><div class="art" role="img" aria-label="Équipement et moto, visuel d’inspiration" data-k="battery"></div><div><span class="proof-label">ACCOMPAGNEMENT</span><h3>Un service identifiable</h3><p>Notre équipe vous accompagne dans votre choix et répond à vos questions avant votre décision.</p></div></article></div><div class="trust-actions"><a class="btn btn-g wa-link" data-msg="Bonjour NeoRide, je voudrais visiter le showroom et voir les modèles disponibles.">Contacter le showroom</a><a class="btn btn-o" href="#localisation">Voir la localisation</a></div><h3 class="si sub">Roulez l’esprit tranquille</h3><div class="gr"><div><b>Garantie constructeur</b><span>Les conditions de garantie dépendent du modèle et du fabricant. Demandez les détails lors de votre visite.</span></div><div><b>Pièces &amp; après-vente</b><span>Renseignez-vous sur l’entretien, les pièces compatibles et les solutions après-vente proposées.</span></div><div><b>Essai avant achat</b><span>Contactez notre équipe pour connaître les possibilités d’essai selon le modèle choisi.</span></div><div><b>Accompagnement administratif</b><span>Notre équipe vous renseigne sur les documents et démarches liés au véhicule choisi.</span></div><div><b>Solutions de reprise</b><span>Contactez-nous pour savoir si une solution de reprise peut être envisagée.</span></div></div></div></section>
+
+<section id="essai"><div class="wrap es" style="max-width:720px"><h2 class="si">Réserver un essai</h2><p class="lead">Choisissez votre modèle, votre jour et l’heure qui vous conviennent.</p><label for="em">Quel modèle ?</label><select id="em"></select><div class="fl">Quel jour ?</div><div class="chips" id="ed"></div><div class="fl">Quelle heure ?</div><div class="chips" id="eh"></div><label for="en">Votre prénom</label><input class="fi" id="en" placeholder="Prénom" autocomplete="given-name"><p class="tiny">Créneaux indicatifs : l’équipe confirme le jour et l’heure sur WhatsApp.</p><div class="pv" id="ep" aria-live="polite"></div><a class="btn btn-g wa-link" id="ew">Envoyer sur WhatsApp</a></div></section>
+
+<section id="faq">
+ <div class="wrap faq">
+  <h2 class="si">Questions fréquentes</h2>
+  <p class="lead">Ce que les clients de Berkane et de l’Oriental nous demandent le plus.</p>
+  <details><summary>Livrez-vous à Oujda, Nador, Saïdia et dans le reste de l’Oriental ?</summary><p>Notre showroom est à Berkane et nous accueillons des clients de toute la région de l’Oriental. Pour une livraison dans votre ville, écrivez-nous sur WhatsApp : nous vous confirmons les conditions et les délais.</p></details>
+  <details><summary>Où acheter une moto électrique fiable à Berkane ?</summary><p>Notre équipe est à votre disposition pour vous présenter les modèles disponibles et vous renseigner sur les conditions de garantie et de service après-vente.</p></details>
+  <details><summary>Est-ce que les pièces de rechange sont disponibles chez Zelloufi ?</summary><p>La disponibilité dépend de la référence. Envoyez-nous une photo de la pièce et le modèle du véhicule ; nous confirmerons le stock et le délai avant votre déplacement.</p></details>
+  <details><summary>Quelle est l’autonomie réelle d’une moto électrique ?</summary><p>L’autonomie dépend du modèle, du poids transporté, du relief et de la vitesse. Notre équipe peut vous orienter selon vos trajets quotidiens.</p></details>
+  <details><summary>Combien coûte la recharge ?</summary><p>Quelques dirhams pour une charge complète sur une prise domestique, bien moins qu’un plein d’essence. Le temps de charge figure sur chaque fiche.</p></details>
+  <details><summary>Puis-je essayer une moto avant d’acheter ?</summary><p>Contactez-nous pour connaître les possibilités d’essai et convenir d’un créneau.</p></details>
+  <details><summary>Y a-t-il une garantie et un service après-vente à Berkane ?</summary><p>Les conditions varient selon le véhicule et le fabricant. Demandez les détails écrits de la garantie et les services réellement assurés avant l’achat.</p></details>
+ </div>
+</section>
+</main>
+
+
+<footer id="localisation">
+ <div class="wrap">
+  <div class="ft">
+   <div>
+    <h2 class="si">Venez nous voir à Berkane</h2>
+    <address class="info">
+     <div><b>Adresse</b>Berkane, région de l’Oriental, Maroc</div>
+     <div><b>Contact</b><span><a href="tel:+212600000000">+212 6 00 00 00 00</a> · <a class="wa-link" data-msg="Bonjour NeoRide, j’ai une question.">WhatsApp</a></span></div>
+     <div><b>Horaires</b><span>Lun – Sam · 9h00 – 19h30</span></div>
+    </address>
+   </div>
+   <div class="map"><iframe title="Carte de Berkane, Maroc" src="https://maps.google.com/maps?q=Berkane%2C%20Morocco&amp;z=13&amp;output=embed" loading="lazy" decoding="async" referrerpolicy="no-referrer-when-downgrade"></iframe><div class="map-overlay"><strong>NeoRide by Zelloufi · Berkane</strong><p>Retrouvez NeoRide by Zelloufi et préparez votre visite.</p><a class="btn btn-g" href="https://www.google.com/maps/search/?api=1&amp;query=NeoRide+by+Zelloufi+Berkane" target="_blank" rel="noopener">Rechercher sur Google Maps <span class="arr" aria-hidden="true">↗</span></a></div></div>
+  </div>
+  <div class="orient"><h3 class="si sub">Depuis Berkane, toute l’Oriental</h3><p class="lead">Vous êtes à Oujda, Nador, Saïdia ou ailleurs dans la région ? Touchez votre ville : un message WhatsApp part vers nous. Indiquez-nous votre ville pour connaître les options de livraison.</p><p class="live" id="live"><span class="liv">Showroom &amp; Atelier Berkane :</span> <strong id="ls">Ouvert</strong> <span>(Lun–Sam 9h–19h30)</span> <span>·</span> <span>Expédition directe vers Oujda, Nador, Saïdia, Taourirt &amp; Ahfir.</span></p><div class="vl"><a class="wa-link" data-msg="Bonjour NeoRide, je suis à Berkane et je souhaite des informations.">Berkane</a><a class="wa-link" data-msg="Bonjour NeoRide, je suis à Oujda. Livrez-vous chez moi ?">Oujda</a><a class="wa-link" data-msg="Bonjour NeoRide, je suis à Nador. Livrez-vous chez moi ?">Nador</a><a class="wa-link" data-msg="Bonjour NeoRide, je suis à Saïdia. Livrez-vous chez moi ?">Saïdia</a><a class="wa-link" data-msg="Bonjour NeoRide, je suis à Taourirt. Livrez-vous chez moi ?">Taourirt</a><a class="wa-link" data-msg="Bonjour NeoRide, je suis à Ahfir. Livrez-vous chez moi ?">Ahfir</a><a class="wa-link" data-msg="Bonjour NeoRide, je suis dans l’Oriental, dans une autre ville. Livrez-vous chez moi ?">Autre ville</a></div></div>
+  <div class="copy">© 2026 NeoRide by Zelloufi. Tous droits réservés.</div>
+ </div>
+</footer>
+
+<div class="ctray" id="ct" hidden role="region" aria-label="Comparaison de modèles"><div class="ctslots"><div class="cts" id="cts1"></div><span class="ctvs" aria-hidden="true">VS</span><div class="cts" id="cts2"></div></div><div class="ctact"><button type="button" class="btn btn-o" id="ctadd" hidden></button><button type="button" class="btn btn-g" id="ctgo" disabled>Voir la comparaison</button><button type="button" class="ctx" id="ctclr" aria-label="Annuler la comparaison">✕</button></div></div>
+<dialog id="cd" class="cd" aria-labelledby="cdt"><div class="cdh"><h2 id="cdt" class="si">Comparaison</h2><button type="button" class="cdx" id="cdx" aria-label="Fermer">✕</button></div><div class="cdsel"><label><span class="sr">Modèle A</span><select id="sa"></select></label><label><span class="sr">Modèle B</span><select id="sb"></select></label></div><div id="cdbody"></div><div class="cdf"><a class="btn btn-g wa-link" id="cdw" target="_blank" rel="noopener">Demander ces deux modèles</a><button type="button" class="btn btn-o" id="cdreset">Réinitialiser</button></div></dialog>
+<div class="dock"><a class="btn btn-o" href="tel:+212600000000">Appeler</a><a class="btn btn-g wa-link" data-msg="Bonjour NeoRide, j’ai une question.">WhatsApp</a></div>
+<script>
+const $=id=>document.getElementById(id);
+const WA="212600000000"/* MOCKUP number: replace with the real one */;
+const MA={"Bonjour NeoRide, je cherche une pièce de rechange. Modèle de ma moto : ":"السلام عليكم NeoRide، كنقلب على قطعة غيار. موديل الموطور ديالي: ","Bonjour NeoRide, je souhaite commander / avoir des informations.":"السلام عليكم NeoRide، بغيت نطلب أو نعرف معلومات أكثر.","Bonjour NeoRide, je suis dans l’Oriental, dans une autre ville. Livrez-vous chez moi ?":"السلام عليكم NeoRide، أنا فالجهة الشرقية، فمدينة أخرى. واش كتوصلو للدار؟","Bonjour NeoRide, je suis livreur et je veux calculer la rentabilité d’une moto électrique pour mon travail.":"السلام عليكم NeoRide، أنا موزّع وبغيت نحسب واش الموطور الكهربائي كيربّحني فالخدمة ديالي.","Bonjour NeoRide, je suis à Berkane et je souhaite des informations.":"السلام عليكم NeoRide، أنا فبركان وبغيت شي معلومات.","Bonjour NeoRide, je voudrais visiter le showroom et voir les modèles disponibles.":"السلام عليكم NeoRide، بغيت نزور المعرض ونشوف الموديلات المتوفرة.","Bonjour NeoRide, j’ai une question avant de choisir une moto électrique.":"السلام عليكم NeoRide، عندي سؤال قبل ما نختار موطور كهربائي.","Bonjour NeoRide, j’ai une question.":"السلام عليكم NeoRide، عندي سؤال.","Bonjour NeoRide, pouvez-vous m’aider à choisir une moto électrique selon mon budget et mes trajets ?":"السلام عليكم NeoRide، واش تقدرو تعاونوني نختار موطور كهربائي على حساب الميزانية والمسافات ديالي؟"},
+CITY={Oujda:"وجدة",Nador:"الناظور","Saïdia":"السعيدية",Taourirt:"تاوريرت",Ahfir:"أحفير"},KMA={"moins de 20 km":"أقل من 20 كم","20 à 40 km":"من 20 حتى 40 كم","plus de 40 km":"أكثر من 40 كم"};
+function wam(t){if(document.documentElement.dir!=="rtl")return t;if(MA[t])return MA[t];let m;
+ if(m=t.match(/^Bonjour NeoRide, je suis à (.+)\. Livrez-vous chez moi \?$/))return"السلام عليكم NeoRide، أنا ف"+(CITY[m[1]]||m[1])+". واش كتوصلو للدار؟";
+ if(m=t.match(/^Bonjour NeoRide, je suis intéressé par : (.+)\. Pouvez-vous me renseigner sur le prix et la disponibilité \?$/))return"السلام عليكم NeoRide، أنا مهتم بـ: "+m[1]+". واش ممكن تعطيوني الثمن والتوفر؟";
+ if(m=t.match(/^Bonjour NeoRide, je compare (.+) \((.+) DH\) et (.+) \((.+) DH\)\. Lequel me conseillez-vous selon mes trajets et mon budget \?$/))return"السلام عليكم NeoRide، كنقارن بين "+m[1]+" ("+m[2]+" درهم) و "+m[3]+" ("+m[4]+" درهم). شنو كتنصحوني حسب المسافات والميزانية ديالي؟";
+ if(m=t.match(/^Bonjour NeoRide, le quiz me recommande : (.+) \((.+) DH\)\. Mes trajets : (.+) par jour\. Est-il disponible \?$/))return"السلام عليكم NeoRide، الاختبار نصحني بـ: "+m[1]+" ("+m[2]+" درهم). المسافة ديالي: "+(KMA[m[3]]||m[3])+" فالنهار. واش متوفر؟";
+ return t}
+const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(wam(t));
+const refreshWa=()=>document.querySelectorAll(".wa-link[data-msg]").forEach(a=>{a.href=wa(a.dataset.msg)});
+let ar=false; // Declare language state before any initializers that read it.
+const battery=$("scrollBattery"),batteryFill=$("batteryFill");
+function chargeByScroll(){const max=Math.max(1,document.documentElement.scrollHeight-innerHeight),pct=Math.min(100,Math.max(0,scrollY/max*100));batteryFill.style.width=pct+"%";}
+addEventListener("scroll",chargeByScroll,{passive:true});addEventListener("resize",chargeByScroll);chargeByScroll();
+const P=[
+{c:"moto",n:"NeoRide NR-1 Sport",s:[["90","km d’autonomie"],["85","km/h max"],["5 h","de charge"],["72V","batterie 30Ah"]],p:"24\u00a0900"},
+{c:"moto",n:"NeoRide Urban 3000",s:[["70","km d’autonomie"],["70","km/h max"],["6 h","de charge"],["60V","batterie 26Ah"]],p:"17\u00a0500"},
+{c:"scoot",n:"Scooter Eco City",s:[["55","km d’autonomie"],["45","km/h max"],["5 h","de charge"],["48V","batterie 20Ah"]],p:"9\u00a0900"},
+{c:"scoot",n:"Trottinette Pro X",s:[["40","km d’autonomie"],["35","km/h max"],["4 h","de charge"],["36V","batterie 15Ah"]],p:"5\u00a0200"},
+{c:"piece",n:"Casque Intégral NeoRide",s:[["ECE","norme 22.06"],["S–XL","tailles"],["1","visière anti-rayures"]],p:"890"},
+{c:"piece",n:"Batterie de rechange 60V",s:[["26Ah","lithium-ion"],["60V","tension"],["Urban","compatible 3000"]],p:"4\u00a0800"}
+];
+const art=(k,l,ac="#2dff6e")=>{const s="#cfd8d3",d="#0f1213",bolt=(x,y)=>`<path d="M${x+8} ${y}l-12 15h9l-4 12 15-17h-9z" fill="${ac}"/>`,
+ w=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${d}" stroke="#2b3236" stroke-width="3"/><circle cx="${x}" cy="${y}" r="${r*.62}" fill="none" stroke="#aeb8b2" stroke-width="3"/><circle cx="${x}" cy="${y}" r="${r*.18}" fill="#aeb8b2"/>`;let b="";
+ if(k==="moto")b=w(98,172,48)+w(304,172,48)+`<path d="M98 172l92-24M304 172l-38-82" stroke="#8d9a93" stroke-width="9" stroke-linecap="round"/><path d="M262 90l-14-14h-26" stroke="${s}" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M128 142l36-40q14-12 40-10l58 8q26 6 30 30l-14 22-130 6z" fill="${s}"/><path d="M168 108l50-6 40 10" stroke="${ac}" stroke-width="5" fill="none"/><rect x="168" y="132" width="92" height="30" rx="5" fill="#161b1e"/>${bolt(206,134)}<path d="M118 120q30-12 66-12l6 14-68 8z" fill="#101315"/><circle cx="283" cy="108" r="6" fill="${ac}"/>`;
+ else if(k==="scoot")b=w(112,190,34)+w(300,190,34)+`<path d="M118 188h110l30-8 20-104" stroke="#8d9a93" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M258 76h38" stroke="${s}" stroke-width="8" stroke-linecap="round"/><path d="M126 184l8-62q4-22 28-22h60l22 62-14 22z" fill="${s}"/><path d="M126 104q36-14 76-6l-2 12-72 6z" fill="#101315"/><rect x="156" y="132" width="64" height="26" rx="5" fill="#161b1e"/>${bolt(180,132)}<circle cx="272" cy="86" r="6" fill="${ac}"/>`;
+ else if(k==="kick")b=w(92,206,26)+w(312,206,26)+`<path d="M92 206h220" stroke="#8d9a93" stroke-width="12" stroke-linecap="round"/><path d="M312 206L286 62" stroke="${s}" stroke-width="9" stroke-linecap="round"/><path d="M266 62h42" stroke="${s}" stroke-width="9" stroke-linecap="round"/><rect x="206" y="188" width="76" height="14" rx="6" fill="#161b1e"/><path d="M214 195h60" stroke="${ac}" stroke-width="4"/><circle cx="292" cy="90" r="5" fill="${ac}"/>`;
+ else if(k==="helmet")b=`<path d="M110 168q-6-96 90-102 96 6 90 102z" fill="${s}"/><path d="M118 156q12-38 82-40 54 2 80 40z" fill="#101315"/><path d="M148 84q52-28 104 0" stroke="${ac}" stroke-width="9" fill="none"/><path d="M110 168h180l-12 30h-156z" fill="#aeb8b2"/>`;
+ else b=`<rect x="108" y="78" width="184" height="104" rx="12" fill="#161b1e" stroke="#aeb8b2" stroke-width="5"/><rect x="292" y="112" width="16" height="36" rx="4" fill="#aeb8b2"/><rect x="124" y="94" width="34" height="72" rx="4" fill="${ac}" opacity=".85"/><rect x="166" y="94" width="34" height="72" rx="4" fill="${ac}" opacity=".6"/><rect x="208" y="94" width="34" height="72" rx="4" fill="${ac}" opacity=".35"/>`;
+ return`<svg viewBox="0 0 400 250" ${l?`role="img" aria-label="${l}"`:'aria-hidden="true"'} preserveAspectRatio="xMidYMid slice"><rect width="400" height="250" fill="#1a1d1f"/><ellipse cx="200" cy="260" rx="240" ry="120" fill="${ac}" opacity=".09"/>${["helmet","battery"].includes(k)?"":'<ellipse cx="200" cy="226" rx="150" ry="7" fill="#000" opacity=".4"/>'}${b}</svg>`},
+ artKind=x=>x.c==="moto"?"moto":x.c==="scoot"?(/Trottinette/.test(x.n)?"kick":"scoot"):(/Casque/.test(x.n)?"helmet":"battery");
+const IC={range:'<path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/>',speed:'<path d="M4 17a8 8 0 1116 0"/><path d="M12 17l4-5"/><circle cx="12" cy="17" r="1"/>',charge:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',battery:'<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10.5v3M7 10v4M11 10v4M15 10v4"/>',ok:'<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>'};
+const specTile=a=>{const t=a[1],k=/autonomie/.test(t)?"range":/km\/h/.test(t)?"speed":/charge/.test(t)?"charge":/batterie|tension|lithium/.test(t)||/(V|Ah)$/.test(a[0])?"battery":"ok";let m="";
+ if(k==="range"||k==="speed"){const veh=P.filter(p=>p.c!=="piece"),i=k==="range"?0:1,mx=Math.max(...veh.map(p=>+p.s[i][0]));m=`<i class="mt" aria-hidden="true"><b style="width:${Math.round(parseFloat(a[0])/mx*100)}%"></b></i>`}
+ return`<li class="st"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg><b>${a[0]}</b><span>${t}</span>${m}</li>`};
+$("list").innerHTML=P.map(x=>`<article class="mdl" data-c="${x.c}"><div class="product-visual">${art(artKind(x),x.n,/Urban/.test(x.n)?"#aeb8b2":"#2dff6e")}</div><div class="product-body"><span class="product-kicker">${x.c==="moto"?"MOTO ÉLECTRIQUE":x.c==="scoot"?"MOBILITÉ URBAINE":"ÉQUIPEMENT & PIÈCES"}</span><h3 class="si">${x.n}</h3><div class="product-price-row"><div class="pr">${x.p} DH</div></div>${x.c==="piece"?`<div class="mo">Caractéristiques du modèle</div>`:""}</div><ul class="spx">${x.s.map(specTile).join("")}</ul><div class="buy"><span class="stock">Renseignements en magasin</span><div class="product-actions"><a class="btn btn-g wa-link" data-msg="Bonjour NeoRide, je suis intéressé par : ${x.n}. Pouvez-vous me renseigner sur le prix et la disponibilité ?">Vérifier prix &amp; disponibilité <span class="arr" aria-hidden="true">↗</span></a>${x.c==="piece"?"":`<button type="button" class="btn btn-o cmp-btn" data-name="${x.n}" aria-pressed="false">Comparer ce modèle</button>`}</div></div></article>`).join("");
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".tabs button").forEach(o=>o.setAttribute("aria-pressed",o===b));
+ document.querySelectorAll(".mdl").forEach(c=>c.hidden=b.dataset.f!=="all"&&c.dataset.c!==b.dataset.f);$("list").scrollLeft=0;carU()});
+document.querySelectorAll(".wa-link").forEach(a=>{if(a.dataset.msg)a.href=wa(a.dataset.msg);a.target="_blank";a.rel="noopener"});
+const Q=[["Vos trajets par jour ?",[["Moins de 20 km",20],["20 à 40 km",40],["Plus de 40 km",60]]],["Votre style de conduite ?",[["Tranquille, en ville",0],["Dynamique, sur route",1]]],["Votre budget ?",[["Jusqu’à 10 000 DH",10000],["10 000 à 18 000 DH",18000],["Plus de 18 000 DH",99999]]]];
+const V=P.filter(p=>p.c!=="piece").map(p=>({...p,k:+p.s[0][0],v:+p.s[1][0],pr:+p.p.replace(/\s/g,"")})),qz=$("qz");let qa=[];
+function qs(){const i=qa.length;if(i<3){qz.innerHTML=`<div class="qp">${[0,1,2].map(j=>`<i class="${j<=i?"on":""}"></i>`).join("")}</div><div class="qq">${Q[i][0]}</div><div class="qo">${Q[i][1].map((o,j)=>`<button data-j="${j}">${o[0]}</button>`).join("")}</div>`;return}
+ const [d,st,bd]=qa.map((j,i)=>Q[i][1][j][1]);let c=V.filter(p=>p.k>=d&&p.pr<=bd);let over=false;if(!c.length){over=true;c=V.filter(p=>p.k>=d)}if(!c.length)c=[...V].sort((a,b)=>b.k-a.k).slice(0,1);
+ c.sort((a,b)=>st?b.v-a.v:a.pr-b.pr);const m=c[0],msg=`Bonjour NeoRide, le quiz me recommande : ${m.n} (${m.p} DH). Mes trajets : ${qa[0]===0?"moins de 20 km":qa[0]===1?"20 à 40 km":"plus de 40 km"} par jour. Est-il disponible ?`;
+ qz.innerHTML=`<div class="qr"><div class="stock">Votre NeoRide idéale</div><h3 class="si">${m.n}</h3><div class="pr">${m.p} DH</div><dl class="sp">${m.s.map(a=>`<div><dd>${a[0]}</dd><dt>${a[1]}</dt></div>`).join("")}</dl>${over?'<p class="tiny">Aucun modèle dans ce budget : voici le plus proche de vos besoins.</p>':''}<div class="cta"><a class="btn btn-g wa-link" data-msg="${msg}" href="${wa(msg)}" target="_blank" rel="noopener">Demander sur WhatsApp</a><button class="btn btn-o" id="qr">Recommencer</button></div></div>`}
+qz.onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.id==="qr")qa=[];else qa.push(+b.dataset.j);qs();const h=qz.querySelector(".qq,.qr h3");if(h){h.tabIndex=-1;h.focus()}};qs();
+const nf=n=>Math.round(n).toLocaleString("fr-FR").replace(/\u202f/g,"\u00a0");
+function chips(id,arr,get,set){const e=$(id);e.innerHTML=arr.map((a,i)=>`<button type="button" aria-pressed="${i===get()}" data-i="${i}">${a}</button>`).join("");e.onclick=ev=>{const b=ev.target.closest("button");if(b){const i=+b.dataset.i;set(i);chips(id,arr,get,set);$(id).querySelector(`[data-i="${i}"]`).focus()}}}
+const opts=V.map((p,i)=>`<option value="${i}">${p.n} — ${p.p} DH</option>`).join("");$("em").innerHTML=opts;
+const DS=["Lun","Mar","Mer","Jeu","Ven","Sam"],DF=["lundi","mardi","mercredi","jeudi","vendredi","samedi"],HS=["10h","12h","16h","18h"];let ed=2,eh=2;
+function ess(){const n=$("en").value.trim()||(ar?"votre prénom":"votre prénom"),t=ar?`السلام عليكم NeoRide، اسمي ${n}. أود تجربة ${V[+$("em").value].n} يوم ${["الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"][ed]} على الساعة ${HS[eh]}.`:`Bonjour NeoRide, c’est ${n}. Je souhaite essayer la ${V[+$("em").value].n} ${DF[ed]} à ${HS[eh]}.`;$("ep").textContent=ar?"معاينة الرسالة: « "+t+" »":"Aperçu : « "+t+" »";$("ew").href=wa(t)}
+$("em").onchange=ess;$("en").oninput=ess;const DSA=["الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"],HSA=HS.map(h=>h.replace("h",":00"));function rc(){chips("ed",ar?DSA:DS,()=>ed,i=>{ed=i;ess()});chips("eh",ar?HSA:HS,()=>eh,i=>{eh=i;ess()})}rc();ess();
+/* calculator */
+const km=$("km"),f=n=>Math.round(n).toLocaleString("fr-FR").replace(/\u202f/g,"\u00a0")+" DH";
+function calc(){const d=+km.value,y=d*365,t=y*(.035*13+.15),e=y*.08;$("kmo").textContent=d+(ar?" كم":" km");$("t1").textContent=f(t);$("t2").textContent=f(e);$("b2").style.width=Math.max(4,e/t*100)+"%";$("sav").textContent=f(t-e);$("reco").textContent=reco(d)}
+function reco(d){const rtl=document.documentElement.dir==="rtl",ok=V.filter(m=>m.k>=d*1.25).sort((a,b)=>a.pr-b.pr);
+ if(ok.length){const l=ok.slice(0,3).map(m=>m.n).join(", ");return rtl?"كيغطيه بشحنة وحدة بلا مشاكل: "+l+".":"Trajet couvert avec une seule charge : "+l+"."}
+ return rtl?"هاد المسافة كتفوت شحنة وحدة: شحن بين الطلبيات ولا بطارية احتياطية.":"Ce trajet dépasse une seule charge : prévoyez une recharge entre deux courses ou une batterie de rechange."}
+const trb=[...document.querySelectorAll("#trajets button")];
+km.oninput=()=>{trb.forEach(b=>b.setAttribute("aria-pressed",b.dataset.km===km.value));calc()};
+trb.forEach(b=>b.onclick=()=>{km.value=b.dataset.km;trb.forEach(o=>o.setAttribute("aria-pressed",o===b));calc()});calc();
+/* road hero */
+const cv=$("road"),x=cv.getContext("2d"),hero=$("hero"),R=matchMedia("(prefers-reduced-motion:reduce)").matches;
+let ac,wA,wB,hum,nz,nf2,gA,gB,gH,gN,master,tz,tlp,gT,tlfo,tlg,gS,mute=false;
+function aud(){if(!ac){try{ac=new(window.AudioContext||window.webkitAudioContext)()}catch(err){ac=null;sndUI("fail");return}const mk=(t,f)=>{const o=ac.createOscillator();o.type=t;o.frequency.value=f;return o},gx=()=>{const g=ac.createGain();g.gain.value=0;return g};
+ master=ac.createGain();master.gain.value=0;const comp=ac.createDynamicsCompressor();master.connect(comp);comp.connect(ac.destination);
+ const lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2600;lp.Q.value=.5;lp.connect(master);
+ wA=mk("sawtooth",220);wB=mk("triangle",440);hum=mk("sine",50);gA=gx();gB=gx();gH=gx();
+ wA.connect(gA);gA.connect(lp);wB.connect(gB);gB.connect(lp);hum.connect(gH);gH.connect(master);
+ const buf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate),d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+ nz=ac.createBufferSource();nz.buffer=buf;nz.loop=true;nf2=ac.createBiquadFilter();nf2.type="bandpass";nf2.frequency.value=600;nf2.Q.value=.7;gN=gx();nz.connect(nf2);nf2.connect(gN);gN.connect(master);
+ tz=ac.createBufferSource();tz.buffer=buf;tz.loop=true;tlp=ac.createBiquadFilter();tlp.type="lowpass";tlp.frequency.value=500;gT=gx();tz.connect(tlp);tlp.connect(gT);gT.connect(master);
+ tlfo=mk("sine",8);tlg=ac.createGain();tlg.gain.value=0;tlfo.connect(tlg);tlg.connect(gT.gain);
+ const ths=ac.createBufferSource();ths.buffer=buf;ths.loop=true;const hp=ac.createBiquadFilter();hp.type="highpass";hp.frequency.value=2600;gS=gx();ths.connect(hp);hp.connect(gS);gS.connect(master);
+ [wA,wB,hum,nz,tz,tlfo,ths].forEach(n=>n.start())}
+ if(ac.state==="suspended")ac.resume().catch(()=>sndUI("fail"))}
+let W,H,v=.07,tg=.07,off=0,vis=true,held=false,sp=0;
+function rs(){const d=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*d;cv.height=H*d;x.setTransform(d,0,0,d,0,0);draw()}
+function draw(){
+ const cx=W/2,vy=H*.4,sw=Math.max(W*.95,H*.8);
+ x.fillStyle="#121314";x.fillRect(0,0,W,H);
+ let g=x.createRadialGradient(cx,vy,0,cx,vy,W*.7);g.addColorStop(0,`rgba(45,255,110,${.1+.3*v})`);g.addColorStop(1,"rgba(45,255,110,0)");x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.fillStyle="#17191b";x.beginPath();x.moveTo(cx,vy);x.lineTo(cx-sw,H);x.lineTo(cx+sw,H);x.fill();
+ x.save();x.shadowColor="#2dff6e";x.shadowBlur=10+18*v;x.strokeStyle="#2dff6e";x.lineWidth=2;
+ x.beginPath();x.moveTo(cx,vy);x.lineTo(cx-sw,H);x.moveTo(cx,vy);x.lineTo(cx+sw,H);x.stroke();x.restore();
+ x.fillStyle="#e4e8ea";
+ for(let i=0;i<14;i++){const z=(i/14+off)%1,p=Math.pow(z,2.4),y=vy+(H-vy)*p,w=1+14*p,h=(4+90*p)*(.6+v);x.fillRect(cx-w/2,y,w,h)}
+ if(v>.3){x.strokeStyle=`rgba(255,255,255,${(v-.3)*.5})`;x.lineWidth=1;x.beginPath();
+  for(let i=0;i<34;i++){const a=(i*137.5)%360*Math.PI/180,r=((i*.173+off*3)%1),sx=cx+Math.cos(a)*W*.12*(1+r),sy=vy+Math.sin(a)*H*.12*(1+r),L=r*r*H*.7*v;x.moveTo(sx,sy);x.lineTo(sx+Math.cos(a)*L,sy+Math.sin(a)*L)}x.stroke()}
+ bike()
+}
+function bike(){const bs=Math.max(70,Math.min(W*.18,H*.2)),cx=W/2,by=H*.78,t=performance.now()/1000,lv=Math.max(0,v-.07)/.93,lean=lv*.05*Math.sin(t*1.6)+lv*.008*Math.sin(t*41),sh=lv*1.6*Math.sin(t*37),gl=.25+.75*lv,lw=Math.max(1,bs*.012),RR=(a,b,w,h,r)=>{x.beginPath();x.roundRect?x.roundRect(a,b,w,h,r):x.rect(a,b,w,h)},E=(a,b,c,d)=>{x.beginPath();x.ellipse(a,b,c,d,0,0,6.283);x.fill();x.stroke()};
+ x.save();x.translate(cx,by);
+ const rg=x.createRadialGradient(0,bs*.08,0,0,bs*.08,bs*.8);rg.addColorStop(0,`rgba(45,255,110,${.16+.5*lv})`);rg.addColorStop(1,"rgba(45,255,110,0)");x.fillStyle=rg;x.beginPath();x.ellipse(0,bs*.08,bs*.8,bs*.2,0,0,6.283);x.fill();
+ const far=(by-H*.4)*.85,bm=x.createLinearGradient(0,-bs*.5,0,-far);bm.addColorStop(0,`rgba(225,255,238,${.04+.32*lv})`);bm.addColorStop(1,"rgba(225,255,238,0)");x.fillStyle=bm;x.beginPath();x.moveTo(-bs*.32,-bs*.5);x.lineTo(bs*.32,-bs*.5);x.lineTo(bs*.05,-far);x.lineTo(-bs*.05,-far);x.fill();
+ x.translate(sh,0);x.rotate(lean);x.lineWidth=lw;x.fillStyle="#0b0c0d";x.strokeStyle="#1f2427";E(0,-bs*.3,bs*.075,bs*.3);
+ x.fillStyle="#15181a";RR(-bs*.15,-bs*.78,bs*.3,bs*.34,bs*.05);x.fill();x.stroke();
+ x.fillStyle="#1d2124";RR(-bs*.2,-bs*.92,bs*.4,bs*.16,bs*.05);x.fill();x.stroke();
+ x.save();x.shadowColor="#2dff6e";x.shadowBlur=8+22*gl;x.fillStyle="#2dff6e";x.fillRect(-bs*.17,-bs*.86,bs*.34,bs*.035);x.restore();
+ x.fillStyle="#0e1011";E(-bs*.22,-bs*1,bs*.09,bs*.17);E(bs*.22,-bs*1,bs*.09,bs*.17);
+ x.beginPath();x.moveTo(-bs*.14,-bs*.95);x.lineTo(bs*.14,-bs*.95);x.lineTo(bs*.25,-bs*1.5);x.lineTo(-bs*.25,-bs*1.5);x.closePath();x.fill();x.stroke();
+ x.lineCap="round";x.strokeStyle="#0e1011";x.lineWidth=bs*.1;x.beginPath();x.moveTo(-bs*.23,-bs*1.45);x.lineTo(-bs*.36,-bs*1.28);x.moveTo(bs*.23,-bs*1.45);x.lineTo(bs*.36,-bs*1.28);x.stroke();
+ x.strokeStyle="#1b1f22";x.lineWidth=bs*.04;x.beginPath();x.moveTo(-bs*.4,-bs*1.28);x.lineTo(bs*.4,-bs*1.28);x.stroke();
+ x.lineWidth=lw;x.fillStyle="#101315";x.strokeStyle="#1f2427";E(0,-bs*1.68,bs*.17,bs*.19);
+ x.strokeStyle=`rgba(45,255,110,${.25+.6*gl})`;x.lineWidth=Math.max(1,bs*.02);x.beginPath();x.arc(0,-bs*1.68,bs*.13,Math.PI*1.1,Math.PI*1.55);x.stroke();
+ x.restore()}
+function loop(){if(vis){v+=(tg-v)*.045;if(!R)off=(off+v*.018)%1;
+ const s=Math.round(Math.max(0,v-.07)/.93*85);if(s!==sp){sp=s;$("n").textContent=s}hero.classList.toggle("speed-mid",s>=8&&s<48);hero.classList.toggle("speed-high",s>=48);
+ if(!R||Math.abs(tg-v)>.002)draw()}if(ac){const T=ac.currentTime,L=Math.max(0,Math.min(1,(v-.07)/.93)),a=Math.min(1,L*5),f=210+L*1750;
+ master.gain.setTargetAtTime(mute||!vis||document.hidden?0:.9,T,.05);
+ wA.frequency.setTargetAtTime(f,T,.05);wB.frequency.setTargetAtTime(f*2.01,T,.05);hum.frequency.setTargetAtTime(48+L*150,T,.06);nf2.frequency.setTargetAtTime(500+L*2300,T,.08);
+ gA.gain.setTargetAtTime(.06*a,T,.06);gB.gain.setTargetAtTime(.03*a,T,.09);gH.gain.setTargetAtTime(.08*a,T,.06);gN.gain.setTargetAtTime(.06*Math.pow(L,1.2),T,.08);const A=.15*Math.pow(L,.9);gT.gain.setTargetAtTime(A*.7,T,.08);tlg.gain.setTargetAtTime(A*.3,T,.08);tlfo.frequency.setTargetAtTime(5+L*32,T,.08);tlp.frequency.setTargetAtTime(350+L*900,T,.08);gS.gain.setTargetAtTime(.04*Math.pow(L,1.3),T,.08)}requestAnimationFrame(loop)}
+const go=on=>{if(on){aud();navigator.vibrate&&navigator.vibrate(8)}held=on;tg=on?1:.07;hero.classList.toggle("run",on)},t=$("thr");let sndSt="on";function sndUI(st){sndSt=st;const b=$("snd");b.classList.toggle("on",st==="on");b.classList.toggle("off",st!=="on");$("sndt").textContent=st==="on"?(ar?"الصوت يعمل":"Son activé"):st==="muted"?(ar?"الصوت مكتوم":"Son coupé"):(ar?"الصوت غير متوفر":"Son indisponible")}
+$("snd").onclick=()=>{mute=!mute;sndUI(mute?"muted":"on")};
+t.addEventListener("pointerdown",e=>{t.setPointerCapture(e.pointerId);go(true)});
+["pointerup","pointercancel","lostpointercapture"].forEach(k=>t.addEventListener(k,()=>go(false)));
+t.addEventListener("keydown",e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();go(true)}});
+t.addEventListener("keyup",()=>go(false));t.addEventListener("blur",()=>go(false));t.addEventListener("contextmenu",e=>e.preventDefault());
+new IntersectionObserver(e=>{vis=e[0].isIntersecting;if(!vis)go(false)}).observe(hero);
+addEventListener("resize",rs);rs();loop();
+/* Bilingual interface: translate text nodes without replacing HTML/icons. */
+const AR_TEXT={
+'CHARGING':'جارٍ الشحن','Aller au contenu':'انتقل إلى المحتوى','Appeler':'اتصل','WhatsApp':'واتساب','Pause':'إيقاف مؤقت','Vos trajets par jour ?':'كم تقطع يوميًا؟','Moins de 20 km':'أقل من 20 كم','20 à 40 km':'من 20 إلى 40 كم','Plus de 40 km':'أكثر من 40 كم','Votre style de conduite ?':'ما أسلوب قيادتك؟','Tranquille, en ville':'هادئ داخل المدينة','Dynamique, sur route':'ديناميكي على الطريق','Votre budget ?':'ما ميزانيتك؟','Jusqu’à 10 000 DH':'حتى 10 000 درهم','10 000 à 18 000 DH':'من 10 000 إلى 18 000 درهم','Plus de 18 000 DH':'أكثر من 18 000 درهم','Recommencer':'ابدأ من جديد','Demander sur WhatsApp':'اطلب عبر واتساب','Comment ça marche':'كيف يعمل','Trois étapes, sans prise de tête.':'ثلاث خطوات بسيطة.','Choisissez':'اختر','Parcourez le catalogue ou répondez au quiz.':'تصفح الكتالوج أو أجب عن الأسئلة الثلاثة.','Essayez':'جرّب','Réservez un créneau au showroom de Berkane.':'احجز موعدًا في معرض بركان.','Roulez':'انطلق','Repartez avec votre moto et un suivi après-vente.':'غادر بدراجتك مع متابعة ما بعد البيع.','Lecture':'تشغيل','Glissez pour voir les modèles':'اسحب لعرض الطرازات','Retirer de la comparaison':'إزالة من المقارنة','Voir la comparaison':'عرض المقارنة','Choisissez un 2e modèle':'اختر طرازًا ثانيًا','Comparer :':'مقارنة:','Comparaison':'مقارنة','Demander ces deux modèles':'اسأل عن الطرازين','Réinitialiser':'إعادة ضبط','Prix':'السعر','Autonomie':'المدى','Vitesse max':'السرعة القصوى','Temps de charge':'مدة الشحن','Batterie':'البطارية','Lun – Sam · 9h00 – 19h30':'الاثنين – السبت · 9:00 – 19:30','Modèles dès 5 200 DH':'طرازات ابتداءً من 5 200 درهم','Créneaux indicatifs : l’équipe confirme le jour et l’heure sur WhatsApp.':'المواعيد تقريبية: يؤكد الفريق اليوم والساعة عبر واتساب.','Aucun modèle dans ce budget : voici le plus proche de vos besoins.':'لا يوجد طراز ضمن هذه الميزانية: هذا الأقرب لاحتياجاتك.','Son activé':'الصوت يعمل','Son coupé':'الصوت مكتوم','M’aider à choisir':'ساعدني في الاختيار','Vérifier prix & disponibilité':'استفسر عن السعر والتوفر','Rechercher sur Google Maps':'البحث على خرائط Google','© 2026 NeoRide by Zelloufi. Tous droits réservés.':'© 2026 NeoRide by Zelloufi. جميع الحقوق محفوظة.','Aperçu : «':'معاينة: «','Demander sur WhatsApp':'اطلب عبر واتساب','12 mois':'12 شهرًا','24 mois':'24 شهرًا','36 mois':'36 شهرًا','Lun':'الإثنين','Mar':'الثلاثاء','Mer':'الأربعاء','Jeu':'الخميس','Ven':'الجمعة','Sam':'السبت','Catalogue':'الكتالوج','Pièces & Accessoires':'قطع الغيار والإكسسوارات','Pourquoi l’Électrique':'لماذا الكهرباء؟','Localisation':'الموقع','Changer de langue / تغيير اللغة':'تغيير اللغة','Motos & scooters électriques à Berkane et dans l’Oriental.':'دراجات وسكوترات كهربائية في بركان وجهة الشرق.','Découvrez les motos et scooters électriques, avec un accompagnement local à Berkane et dans l’Oriental.':'اكتشفوا الدراجات والسكوترات الكهربائية مع مواكبة محلية في بركان والجهة الشرقية.','Découvrir le catalogue':'اكتشف الكتالوج','Réserver un essai':'احجز تجربة','Essayez l’expérience électrique':'جرّب تجربة التنقل الكهربائي','Maintenez pour accélérer':'اضغط باستمرار للتسارع','Pièces de rechange':'قطع الغيار','Service après-vente local':'خدمة ما بعد البيع محليًا','Conseils à Berkane et dans l’Oriental':'مواكبة في بركان والجهة الشرقية',
+'TROUVEZ VOTRE PROCHAINE MOBILITÉ':'اعثر على وسيلة تنقلك القادمة','Le catalogue':'الكتالوج','Comparez les modèles, repérez les caractéristiques qui comptent pour vos trajets, puis demandez une confirmation sur WhatsApp.':'قارن بين الطرازات واختر المواصفات المناسبة لتنقلاتك، ثم تواصل معنا عبر واتساب لتأكيد التفاصيل.','Trouvez le modèle adapté à vos trajets et à votre budget.':'اعثر على الطراز المناسب لتنقلاتك وميزانيتك.','Toutes':'الكل','Motos Électriques':'دراجات كهربائية','Trottinettes & Scooters':'سكوترات ودراجات صغيرة','Casques & Pièces':'خوذات وقطع غيار','Vous hésitez entre deux modèles ?':'هل تحتار بين طرازين؟','Envoyez-nous votre trajet quotidien et votre budget. On vous aidera à comparer les options disponibles.':'أرسل لنا تفاصيل تنقلاتك اليومية وميزانيتك، وسنساعدك في مقارنة الخيارات المتاحة.','M’aider à choisir':'ساعدني في الاختيار','Besoin d’aide ?':'هل تحتاج إلى مساعدة؟','Notre équipe peut vous aider à comparer les modèles selon vos trajets, votre budget et vos habitudes de déplacement.':'يمكن لفريقنا مساعدتك في مقارنة الطرازات وفق تنقلاتك وميزانيتك وعاداتك اليومية.',
+'Roulez l’esprit tranquille':'قد بثقة وراحة بال','Les réponses essentielles pour choisir votre prochaine moto électrique.':'إجابات مهمة لمساعدتك على اختيار دراجتك الكهربائية القادمة.','Garantie constructeur':'ضمان الشركة المصنّعة','Les conditions de garantie dépendent du modèle et du fabricant. Demandez les détails lors de votre visite.':'تختلف شروط الضمان حسب الطراز والشركة المصنّعة. اطلب التفاصيل عند زيارتك.','Pièces & après-vente':'قطع الغيار وخدمة ما بعد البيع','Renseignez-vous sur l’entretien, les pièces compatibles et les solutions après-vente proposées.':'استفسر عن الصيانة وقطع الغيار المتوافقة وخدمات ما بعد البيع المتاحة.','Essai avant achat':'جرّب قبل الشراء','Contactez notre équipe pour connaître les possibilités d’essai selon le modèle choisi.':'تواصل مع فريقنا لمعرفة إمكانية تجربة الطراز الذي تختاره.','Accompagnement administratif':'المواكبة الإدارية','Notre équipe vous renseigne sur les documents et démarches liés au véhicule choisi.':'يساعدك فريقنا في معرفة الوثائق والإجراءات المتعلقة بالمركبة المختارة.','Solutions de reprise':'إمكانية استبدال المركبة','Contactez-nous pour savoir si une solution de reprise peut être envisagée.':'تواصل معنا لمعرفة ما إذا كان استبدال مركبتك ممكنًا.',
+'Trouvez votre NeoRide en 3 questions':'اعثر على NeoRide المناسبة لك في 3 أسئلة','Vos trajets, votre style, votre budget : on vous indique le modèle qui vous correspond.':'تنقلاتك وأسلوبك وميزانيتك: سنساعدك في اختيار الطراز المناسب.',
+'DH d’essence':'درهم للبنزين','Chaque kilomètre vous coûte presque rien.':'تكلفة كل كيلومتر منخفضة جدًا.','Entretien minimal.':'صيانة أقل.','Ni vidange, ni bougies, ni courroie : on passe moins de temps à l’atelier.':'لا تغيير للزيت ولا شمعات إشعال ولا سير نقل الحركة؛ وقت أقل في الصيانة.','Silence et puissance.':'هدوء وقوة.','La poussée est immédiate dès que vous tournez la poignée, sans bruit ni fumée.':'تسارع فوري عند تدوير المقبض، دون ضجيج أو دخان.','Vos trajets par jour':'تنقلاتك اليومية','Thermique':'بنزين','Électrique':'كهربائية','Économie estimée par an':'التوفير السنوي التقديري','Estimation : thermique 3,5 L/100 km, essence 13 DH/L, entretien 0,15 DH/km ; électrique 0,05 DH/km de recharge et 0,03 DH/km d’entretien.':'تقدير: البنزين 3.5 لتر لكل 100 كم بسعر 13 درهمًا للتر وصيانة 0.15 درهم/كم؛ والكهرباء 0.05 درهم/كم للشحن و0.03 درهم/كم للصيانة.',
+'Batteries, chargeurs, pneus, plaquettes, casques, antivols : les références courantes sont au showroom. Envoyez-nous une photo de la pièce ou le modèle de votre moto.':'بطاريات وشواحن وإطارات وفرامل وخوذ وأقفال: اسأل عن القطع المتوفرة في المعرض. أرسل صورة القطعة أو طراز دراجتك.','Demander une pièce':'اطلب قطعة غيار','LA CONFIANCE, SANS PROMESSES VIDES':'الثقة دون وعود فارغة','Venez voir. Posez vos questions. Décidez sereinement.':'تفضل بالزيارة، واطرح أسئلتك، واتخذ قرارك براحة.','Découvrez les modèles de près, échangez avec notre équipe et trouvez la solution qui correspond à votre quotidien.':'تعرّف على الطرازات عن قرب، وتحدث مع فريقنا لاختيار ما يناسب احتياجاتك اليومية.','NOS MODÈLES':'طرازاتنا','Les modèles en vrai':'شاهد الطرازات عن قرب','Découvrez une sélection de véhicules pensés pour simplifier vos déplacements en ville et au quotidien.':'اكتشف مجموعة من المركبات المصممة لتسهيل تنقلاتك داخل المدينة وفي حياتك اليومية.','DANS LES DÉTAILS':'التفاصيل','Les détails qui rassurent':'تفاصيل تمنحك الثقة','Comparez les équipements, les caractéristiques et les options pour choisir le modèle qui vous convient.':'قارن التجهيزات والمواصفات والخيارات لاختيار الطراز المناسب لك.','ACCOMPAGNEMENT':'المواكبة','Un service identifiable':'خدمة ومواكبة واضحة','Notre équipe vous accompagne dans votre choix et répond à vos questions avant votre décision.':'يرافقك فريقنا في الاختيار ويجيب عن أسئلتك قبل اتخاذ القرار.','Contacter le showroom':'تواصل مع المعرض','Voir la localisation':'عرض الموقع',
+'Choisissez votre modèle, votre jour et l’heure qui vous conviennent.':'اختر الطراز واليوم والوقت المناسب لك.','Quel modèle ?':'أي طراز؟','Quel jour ?':'أي يوم؟','Quelle heure ?':'أي ساعة؟','Votre prénom':'اسمك الأول','Prénom':'الاسم الأول','Envoyer sur WhatsApp':'أرسل عبر واتساب','Depuis Berkane, toute l’Oriental':'من بركان إلى مختلف أنحاء جهة الشرق','Vous êtes à Oujda, Nador, Saïdia ou ailleurs dans la région ? Touchez votre ville : un message WhatsApp part vers nous. Indiquez-nous votre ville pour connaître les options de livraison.':'هل أنت في وجدة أو الناظور أو السعيدية أو مدينة أخرى بالجهة؟ اختر مدينتك لإرسال رسالة عبر واتساب والاستفسار عن خيارات التوصيل.','Berkane':'بركان','Oujda':'وجدة','Nador':'الناظور','Saïdia':'السعيدية','Taourirt':'تاوريرت','Ahfir':'أحفير','Autre ville':'مدينة أخرى',
+'UN CONTACT HUMAIN':'تواصل مباشر','Une question avant de choisir ?':'هل لديك سؤال قبل الاختيار؟','Écrivez-nous avec le modèle qui vous intéresse : nous vous aiderons à trouver la solution adaptée à vos besoins.':'أرسل لنا اسم الطراز الذي يهمك، وسنساعدك في العثور على الخيار المناسب لاحتياجاتك.','Poser ma question':'اطرح سؤالك','Revoir le catalogue':'العودة إلى الكتالوج','Questions fréquentes':'الأسئلة الشائعة','Ce que les clients de Berkane et de l’Oriental nous demandent le plus.':'إجابات عن أكثر الأسئلة شيوعًا لدى عملائنا في بركان وجهة الشرق.',
+'Livrez-vous à Oujda, Nador, Saïdia et dans le reste de l’Oriental ?':'هل توصلون إلى وجدة والناظور والسعيدية وباقي جهة الشرق؟','Notre showroom est à Berkane et nous accueillons des clients de toute la région de l’Oriental. Pour une livraison dans votre ville, écrivez-nous sur WhatsApp : nous vous confirmons les conditions et les délais.':'يقع معرضنا في بركان ونستقبل عملاء من مختلف أنحاء جهة الشرق. لمعرفة إمكانية التوصيل إلى مدينتك، راسلنا عبر واتساب لتأكيد الشروط والمدة.','Où acheter une moto électrique fiable à Berkane ?':'أين يمكن شراء دراجة كهربائية موثوقة في بركان؟','Notre équipe est à votre disposition pour vous présenter les modèles disponibles et vous renseigner sur les conditions de garantie et de service après-vente.':'فريقنا مستعد لعرض الطرازات المتاحة وشرح شروط الضمان وخدمة ما بعد البيع.','Est-ce que les pièces de rechange sont disponibles chez Zelloufi ?':'هل قطع الغيار متوفرة لدى زلّوفي؟','La disponibilité dépend de la référence. Envoyez-nous une photo de la pièce et le modèle du véhicule ; nous confirmerons le stock et le délai avant votre déplacement.':'يعتمد التوفر على رقم القطعة. أرسل صورة للقطعة وطراز المركبة وسنؤكد التوفر والمدة قبل زيارتك.','Quelle est l’autonomie réelle d’une moto électrique ?':'ما مدى السير الفعلي للدراجة الكهربائية؟','L’autonomie dépend du modèle, du poids transporté, du relief et de la vitesse. Notre équipe peut vous orienter selon vos trajets quotidiens.':'يعتمد مدى السير على الطراز والوزن والتضاريس والسرعة. يمكن لفريقنا إرشادك وفق تنقلاتك اليومية.','Combien coûte la recharge ?':'كم تبلغ تكلفة الشحن؟','Quelques dirhams pour une charge complète sur une prise domestique, bien moins qu’un plein d’essence. Le temps de charge figure sur chaque fiche.':'قد تكلف الشحنة الكاملة عبر مقبس منزلي بضعة دراهم، وهي أقل بكثير من ملء خزان البنزين. تختلف مدة الشحن حسب الطراز.','Puis-je essayer une moto avant d’acheter ?':'هل يمكنني تجربة الدراجة قبل الشراء؟','Contactez-nous pour connaître les possibilités d’essai et convenir d’un créneau.':'تواصل معنا لمعرفة إمكانية التجربة وتحديد موعد مناسب.','Y a-t-il une garantie et un service après-vente à Berkane ?':'هل يوجد ضمان وخدمة ما بعد البيع في بركان؟','Les conditions varient selon le véhicule et le fabricant. Demandez les détails écrits de la garantie et les services réellement assurés avant l’achat.':'تختلف الشروط حسب المركبة والشركة المصنّعة. اطلب تفاصيل الضمان المكتوبة والخدمات المؤكدة قبل الشراء.',
+'Venez nous voir à Berkane':'زورونا في بركان','Adresse':'العنوان','Berkane, région de l’Oriental, Maroc':'بركان، جهة الشرق، المغرب','Contact':'التواصل','Contactez notre équipe pour toute question':'تواصل مع فريقنا لأي استفسار','Horaires':'مواعيد العمل','Contactez-nous avant votre visite':'يرجى التواصل معنا قبل الزيارة','Retrouvez NeoRide by Zelloufi et préparez votre visite.':'اعثر على NeoRide by Zelloufi واستعد لزيارتك.','Rechercher sur Google Maps':'البحث على خرائط Google','Tous droits réservés.':'جميع الحقوق محفوظة.','ZERO EMISSIONS':'انعدام الانبعاثات','BUILT TO MOVE':'صُممت للحركة',
+'MOTO ÉLECTRIQUE':'دراجة كهربائية','MOBILITÉ URBAINE':'تنقل حضري','ÉQUIPEMENT & PIÈCES':'تجهيزات وقطع غيار','Caractéristiques du modèle':'مواصفات الطراز','Renseignements en magasin':'استفسر في المعرض','Vérifier prix & disponibilité':'استفسر عن السعر والتوفر','Comparer ce modèle':'قارن هذا الطراز','Votre NeoRide idéale':'NeoRide المناسبة لك','Recommencer':'إعادة المحاولة','Vos trajets par jour ?':'كم تقطع يوميًا؟','Moins de 20 km':'أقل من 20 كم','20 à 40 km':'من 20 إلى 40 كم','Plus de 40 km':'أكثر من 40 كم','Votre style de conduite ?':'ما أسلوب قيادتك؟','Tranquille, en ville':'هادئ داخل المدينة','Dynamique, sur route':'نشط على الطريق','Votre budget ?':'ما ميزانيتك؟','Jusqu’à 10 000 DH':'حتى 10,000 درهم','10 000 à 18 000 DH':'من 10,000 إلى 18,000 درهم','Plus de 18 000 DH':'أكثر من 18,000 درهم','km d’autonomie':'كم مدى السير','km/h max':'كم/ساعة كحد أقصى','de charge':'للشحن','batterie 30Ah':'بطارية 30Ah','batterie 26Ah':'بطارية 26Ah','batterie 20Ah':'بطارية 20Ah','batterie 15Ah':'بطارية 15Ah','norme 22.06':'معيار 22.06','tailles':'المقاسات','visière anti-rayures':'واقٍ مقاوم للخدش','lithium-ion':'ليثيوم-أيون','tension':'الجهد','compatible 3000':'متوافق مع 3000',
+'Trajet type':'مسار معتاد','Berkane Ville (15 km)':'بركان المدينة (15 كم)','Berkane ↔ Ahfir (35 km)':'بركان ↔ أحفير (35 كم)','Berkane ↔ Saïdia (50 km)':'بركان ↔ السعيدية (50 كم)','Livreur / Intensif (85 km)':'موزّع / استعمال مكثف (85 كم)','Vous êtes livreur (Glovo, resto, coursier) à Berkane, Oujda ou Nador ?':'واش نتا موزّع (Glovo، مطعم، ساعي) فبركان، وجدة ولا الناظور؟','Arrêtez de brûler 40 à 60 DH d’essence par jour (~1 500 DH/mois). Une NeoRide électrique vous coûte moins de 5 DH de charge par jour : votre moto se rentabilise avec vos économies d’essence.':'بلا ما تحرق 40 حتى 60 درهم ديال البنزين فالنهار (حوالي 1 500 درهم فالشهر). موطور NeoRide الكهربائي كيكلفك أقل من 5 دراهم ديال الشحن فالنهار: الموطور كيخلّص على راسو من اللي كتوفر فالبنزين.','Calculer ma rentabilité':'حسب ليا الربح ديالي','Rechargez comme un téléphone':'شحن بحال التيليفون','Déclipsez en 10 sec':'حيّدها فـ 10 ثواني','Batterie à poignée ergonomique':'بطارية بمقبض مريح','Montez-la chez vous':'طلّعها للدار','Appartement, bureau ou café — plus besoin de prise au garage':'شقة، مكتب ولا مقهى — ما بقيتي محتاج بريز فالكاراج','Branchez sur prise 220V':'وصّلها بالبريز 220 فولت','Charge complète pour ~2 à 3 DH d’électricité':'شحن كامل بحوالي 2 حتى 3 دراهم ديال الكهرباء','Réponse rapide — vous pouvez écrire ou envoyer un message vocal (audio) sur WhatsApp.':'جواب سريع — تقدر تكتب ولا تصيفط رسالة صوتية (أوديو) على واتساب.','Showroom & Atelier Berkane :':'المعرض والورشة فبركان :','Ouvert':'مفتوح','Fermé pour le moment':'مسدود دابا','(Lun–Sam 9h–19h30)':'(الاثنين–السبت 9:00–19:30)','Expédition directe vers Oujda, Nador, Saïdia, Taourirt & Ahfir.':'شحن مباشر نحو وجدة، الناظور، السعيدية، تاوريرت وأحفير.','Réserver un essai':'جرّب الموطور فبركان','Poser ma question':'تواصل معنا فواتساب (كتابة أو أوديو)','Découvrir le catalogue':'شوف الكتالوج','Vérifier prix & disponibilité':'سول على الثمن والتوفر',
+'Maintenir pour accélérer':'اضغط مطوّلًا للتسريع','km/h':'كم/س','Critère':'المعيار','Modèle A':'الطراز أ','Modèle B':'الطراز ب','Son indisponible':'الصوت غير متوفر','Navigation principale':'التنقل الرئيسي','Commander sur WhatsApp':'اطلب عبر واتساب','Filtrer par catégorie':'تصفية حسب الفئة','Modèle précédent':'الطراز السابق','Modèle suivant':'الطراز التالي','Modèles NeoRide':'طرازات NeoRide','Trajets types':'مسارات معتادة','Mettre l’animation en pause':'إيقاف الحركة مؤقتًا','Reprendre l’animation':'استئناف الحركة','Carte de Berkane, Maroc':'خريطة بركان، المغرب','Comparaison de modèles':'مقارنة الطرازات','Annuler la comparaison':'إلغاء المقارنة','Fermer':'إغلاق','NeoRide électrique en mouvement':'NeoRide كهربائية في حركة','Moto exposée, visuel d’inspiration':'دراجة معروضة (صورة توضيحية)','Détail de moto, visuel d’inspiration':'تفصيل دراجة (صورة توضيحية)','Équipement et moto, visuel d’inspiration':'تجهيزات ودراجة (صورة توضيحية)','Showroom NeoRide (visuel d’illustration)':'معرض NeoRide (صورة توضيحية)',
+};
+const arAttrs={'aria-label':{'Navigation principale':'التنقل الرئيسي','Changer de langue / تغيير اللغة':'تغيير اللغة','Maintenir pour accélérer':'اضغط باستمرار للتسارع','Commander sur WhatsApp':'اطلب عبر واتساب','Progression de navigation':'تقدم التصفح'},'placeholder':{'Prénom':'الاسم الأول'},'alt':{'Moto exposée, visuel d’inspiration':'دراجة معروضة','Détail de moto, visuel d’inspiration':'تفاصيل دراجة','Équipement et moto, visuel d’inspiration':'تجهيزات ودراجة','Équipe et accompagnement NeoRide':'فريق NeoRide والمواكبة'}};
+const originalText=new WeakMap(),originalAttrs=new WeakMap();
+function translateTree(root, toArabic){
+ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;
+ while(node=walker.nextNode()){
+  if(!originalText.has(node)) originalText.set(node,node.nodeValue);
+  const original=originalText.get(node),trim=original.trim();
+  if(toArabic && AR_TEXT[trim]){const lead=original.match(/^\s*/)[0],tail=original.match(/\s*$/)[0];node.nodeValue=lead+AR_TEXT[trim]+tail}
+  else if(!toArabic) node.nodeValue=original;
+ }
+ root.querySelectorAll?.('[aria-label],[placeholder],[alt],[title]').forEach(el=>{
+  ['aria-label','placeholder','alt','title'].forEach(attr=>{if(!el.hasAttribute(attr))return;let vals=originalAttrs.get(el);if(!vals){vals={};originalAttrs.set(el,vals)}if(!(attr in vals))vals[attr]=el.getAttribute(attr);const v=vals[attr];el.setAttribute(attr,toArabic?(arAttrs[attr]?.[v]||v):v)})
+ });
+}
+const langBtn=$('lang');langBtn.onclick=()=>{ar=!ar;document.documentElement.dir=ar?'rtl':'ltr';document.documentElement.lang=ar?'ar':'fr';document.title=ar?arabicTitle:frenchTitle;translateTree(document.body,ar);langBtn.textContent=ar?'Français':'عربية';langBtn.setAttribute('aria-label',ar?'التبديل إلى الفرنسية':'التبديل إلى العربية');$('snd').textContent=ar?(mute?'الصوت مكتوم':'الصوت يعمل'):(mute?'Son coupé':'Son activé');if(typeof ess==='function')ess();chargeByScroll();};
+const frenchTitle=document.title;const arabicTitle='NeoRide by Zelloufi — دراجات كهربائية وسكوترات وقطع غيار في بركان وجهة الشرق';
+const languageObserver=new MutationObserver(records=>{if(!ar)return;for(const record of records)for(const n of record.addedNodes)if(n.nodeType===Node.ELEMENT_NODE)translateTree(n,true);else if(n.nodeType===Node.TEXT_NODE){const original=n.nodeValue.trim();if(AR_TEXT[original]){originalText.set(n,n.nodeValue);n.nodeValue=n.nodeValue.replace(original,AR_TEXT[original])}}});
+languageObserver.observe(document.body,{childList:true,subtree:true});
+
+document.addEventListener("visibilitychange",()=>{if(document.hidden)go(false)});
+/* swipeable catalogue */
+const lst=$("list"),cpos=$("cpos"),cp=$("cprev"),cn=$("cnext");
+const vcards=()=>[...lst.querySelectorAll(".mdl:not([hidden])")];
+function carU(){const c=vcards(),n=c.length,w=c[0]?c[0].offsetWidth+16:1,sl=Math.abs(lst.scrollLeft),i=Math.min(Math.max(n-1,0),Math.round(sl/w));cpos.textContent=n?(i+1)+" / "+n:"";cp.disabled=sl<4;cn.disabled=sl+lst.clientWidth>=lst.scrollWidth-4;if(sl>24)$("chint").hidden=true;const cb0=c[i]&&c[i].querySelector(".cmp-btn"),cur=cb0?cb0.dataset.name:null;if(cur!==window.curModel){window.curModel=cur;document.dispatchEvent(new Event("carchange"))}}
+lst.addEventListener("scroll",()=>requestAnimationFrame(carU),{passive:true});addEventListener("resize",carU);
+const stp=d=>{const c=vcards()[0];lst.scrollBy({left:d*(ar?-1:1)*(c?c.offsetWidth+16:300),behavior:R?"auto":"smooth"})};cp.onclick=()=>stp(-1);cn.onclick=()=>stp(1);carU();
+/* comparison tool */
+let ca=null,cb=null;const ct=$("ct"),cd=$("cd"),vf=n=>V.find(m=>m.n===n),num=t=>parseFloat(String(t).replace(",","."));
+$("sa").innerHTML=$("sb").innerHTML=V.map(m=>`<option>${m.n}</option>`).join("");
+function sync(){const cur=window.curModel;
+ document.querySelectorAll(".cmp-btn").forEach(b=>{const n=b.dataset.name,on=n===ca||n===cb;b.setAttribute("aria-pressed",on);b.classList.toggle("sel",on);b.textContent=on?"Retirer de la comparaison":(ca&&!cb?(ar?"قارن مع ":"Comparer avec ")+ca:"Comparer ce modèle")});
+ ct.hidden=!ca;document.body.classList.toggle("hastray",!!ca);
+ const slot=(id,n,ph)=>{$(id).innerHTML=n?`<span class="cth">${art(artKind(P.find(p=>p.n===n)),"")}</span><b>${n}</b><button type="button" class="ctrm" data-rm="${n}" aria-label="Retirer ${n}">✕</button>`:`<span class="cte">${ph?'+ <span>Choisissez un 2e modèle</span>':""}</span>`};slot("cts1",ca,0);slot("cts2",cb,1);
+ const add=$("ctadd"),can=ca&&!cb&&cur&&cur!==ca;add.hidden=!can;if(can)add.textContent=(ar?"قارن مع ":"Comparer avec ")+cur;$("ctgo").disabled=!cb}
+function renderCmp(){const A=vf(ca),B=vf(cb);$("sa").value=ca;$("sb").value=cb;
+ const rows=[["Prix",m=>nf(m.pr)+" DH",m=>m.pr,-1],["Autonomie",m=>m.k+" km",m=>m.k,1],["Vitesse max",m=>m.v+" km/h",m=>m.v,1],["Temps de charge",m=>m.s[2][0],m=>num(m.s[2][0]),-1],["Batterie",m=>m.s[3][0]+" · "+m.s[3][1].replace("batterie ",""),null,0]];
+ const cell=(m,o,k,d,f)=>{const w=k&&d&&k(m)!==k(o)&&(k(m)-k(o))*d>0;return`<td class="${w?"win":""}">${w?'<span class="sr">(meilleur) </span>':""}${f(m)}</td>`};
+ const tr=rows.map(r=>`<tr><th scope="row">${r[0]}</th>${cell(A,B,r[2],r[3],r[1])}${cell(B,A,r[2],r[3],r[1])}</tr>`).join("");
+ const dk=A.k-B.k,dv=A.v-B.v,dp=A.pr-B.pr,pt=[];if(dk)pt.push(`${dk>0?A.n:B.n} va plus loin (+${Math.abs(dk)} km)`);if(dv)pt.push(`${dv>0?A.n:B.n} est plus rapide (+${Math.abs(dv)} km/h)`);if(dp)pt.push(`${dp<0?A.n:B.n} coûte ${nf(Math.abs(dp))} DH de moins`);
+ $("cdbody").innerHTML=`<table class="cmpt"><caption class="sr">${A.n} comparé à ${B.n}</caption><thead><tr><th scope="col"><span class="sr">Critère</span></th><th scope="col">${A.n}</th><th scope="col">${B.n}</th></tr></thead><tbody>${tr}</tbody></table><p class="cdsum">${pt.length?pt.join(" ; ")+".":""}</p>`;
+ $("cdw").href=wa(`Bonjour NeoRide, je compare ${A.n} (${A.p} DH) et ${B.n} (${B.p} DH). Lequel me conseillez-vous selon mes trajets et mon budget ?`)}
+function openCmp(){renderCmp();if(!cd.open)cd.showModal()}
+document.addEventListener("click",e=>{const b=e.target.closest(".cmp-btn");if(!b)return;const n=b.dataset.name;navigator.vibrate&&navigator.vibrate(8);
+ if(ca===n){ca=cb;cb=null}else if(cb===n)cb=null;else if(!ca)ca=n;else{cb=n}sync();if(ca&&cb)openCmp()});
+$("sa").onchange=e=>{ca=e.target.value;if(ca===cb)cb=[...$("sb").options].map(o=>o.value).find(v=>v!==ca);sync();renderCmp()};
+$("sb").onchange=e=>{cb=e.target.value;if(cb===ca)ca=[...$("sa").options].map(o=>o.value).find(v=>v!==cb);sync();renderCmp()};
+$("ctgo").onclick=openCmp;$("ctclr").onclick=$("cdreset").onclick=()=>{ca=cb=null;sync();if(cd.open)cd.close()};$("cdx").onclick=()=>cd.close();
+function live(){const p=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Africa/Casablanca",weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()).map(q=>[q.type,q.value])),m=+p.hour*60+ +p.minute,open=p.weekday!=="Sun"&&m>=540&&m<1170;$("live").classList.toggle("closed",!open);$("ls").textContent=open?"Ouvert":"Fermé pour le moment"}
+live();setInterval(live,60000);
+document.addEventListener("carchange",()=>{if(ca)sync()});
+$("ctadd").onclick=()=>{cb=window.curModel;sync();openCmp()};
+document.addEventListener("click",e=>{const r=e.target.closest(".ctrm");if(!r)return;const n=r.dataset.rm;if(ca===n){ca=cb;cb=null}else if(cb===n)cb=null;sync()});
+langBtn.addEventListener("click",()=>{rc();ess();calc();refreshWa();sync();carU();if(cd.open&&ca&&cb)renderCmp()});
+const dk=document.querySelector(".dock");new IntersectionObserver(e=>{const on=!e[0].isIntersecting;dk.classList.toggle("on",on);document.body.classList.toggle("dockon",on)}).observe(hero);
+document.addEventListener("focusin",e=>{if(e.target.matches("input,select,textarea")){dk.classList.remove("on");document.body.classList.remove("dockon")}});
+document.addEventListener("focusout",()=>{const on=scrollY>hero.offsetHeight*.8;dk.classList.toggle("on",on);document.body.classList.toggle("dockon",on)});
+document.querySelectorAll(".art").forEach(e=>e.innerHTML=art(e.dataset.k,""));cd.addEventListener("click",e=>{if(e.target===cd)cd.close()});sync();
+const tabNav=document.querySelector("nav a[data-tab]");if(tabNav)tabNav.addEventListener("click",()=>{const b=document.querySelector('.tabs [data-f="piece"]');if(b)b.click()});
+/* SEO */
+const s=document.createElement("script");s.type="application/ld+json";
+s.textContent=JSON.stringify({"@context":"https://schema.org","@type":"FAQPage",mainEntity:[...document.querySelectorAll("#faq details")].map(d=>({"@type":"Question",name:d.querySelector("summary").textContent,acceptedAnswer:{"@type":"Answer",text:d.querySelector("p").textContent}}))});
+document.head.appendChild(s);
+/* MOCKUP data: replace phone/address/hours with the real ones */
+const b=document.createElement("script");b.type="application/ld+json";b.textContent=JSON.stringify({"@context":"https://schema.org","@type":"MotorcycleDealer",name:"NeoRide by Zelloufi",areaServed:"Oriental, Maroc",address:{"@type":"PostalAddress",addressLocality:"Berkane",addressCountry:"MA"},telephone:"+212600000000",openingHours:"Mo-Sa 09:00-19:30"});document.head.appendChild(b);
+</script>
+</body>
+</html>

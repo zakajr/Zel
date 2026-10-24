@@ -1,0 +1,6 @@
+{
+  "name": "NeoRide by Zelloufi — Mobilité Électrique Berkane & Oriental",
+  "description": "Découvrez et comparez les motos électriques, scooters et pièces de rechange NeoRide by Zelloufi à Berkane et dans l’Oriental. Calculateur d’économies, quiz interactif et réservation d’essai.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
