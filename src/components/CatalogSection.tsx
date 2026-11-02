@@ -1,19 +1,11 @@
-import React, { useState } from 'react';
-import {
-  ArrowUpRight,
-  SlidersHorizontal,
-  Layers,
-  Check,
-  Mic,
-  Eye,
-  LayoutGrid,
-  List,
-} from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { LayoutGrid, GalleryHorizontal } from 'lucide-react';
 import {
   Lang,
   PRODUCTS,
-  ProductCategory,
   ProductItem,
+  ProductCategory,
+  ProductSpec,
   buildWhatsAppUrl,
 } from '../data/neorideData';
 import { VehicleIllustration } from './VehicleIllustration';
@@ -24,8 +16,8 @@ interface CatalogSectionProps {
   onSelectCategory: (cat: ProductCategory) => void;
   compareIds: string[];
   onToggleCompare: (productId: string) => void;
+  onCarouselModelChange: (productId: string | null) => void;
   onInspectProduct: (product: ProductItem) => void;
-  onBookTestRide: (productId: string) => void;
 }
 
 export const CatalogSection: React.FC<CatalogSectionProps> = ({
@@ -34,371 +26,516 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
   onSelectCategory,
   compareIds,
   onToggleCompare,
+  onCarouselModelChange,
   onInspectProduct,
-  onBookTestRide,
 }) => {
-  const [sortBy, setSortBy] = useState<'default' | 'price-asc' | 'range-desc'>('default');
-  const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
-  const [xrayCards, setXrayCards] = useState<Record<string, boolean>>({});
-  const [mobileCompact, setMobileCompact] = useState<boolean>(false);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const [viewMode, setViewMode] = useState<'carousel' | 'grid'>('carousel');
+  const [carouselPos, setCarouselPos] = useState<string>('1 / 6');
+  const [canPrev, setCanPrev] = useState<boolean>(false);
+  const [canNext, setCanNext] = useState<boolean>(true);
+  const [hideHint, setHideHint] = useState<boolean>(false);
 
-  const categories: { id: ProductCategory; labelFr: string; labelAr: string; count: number }[] = [
-    { id: 'all', labelFr: 'Tous les modèles', labelAr: 'الكل', count: PRODUCTS.length },
-    {
-      id: 'moto',
-      labelFr: 'Motos Électriques',
-      labelAr: 'دراجات كهربائية',
-      count: PRODUCTS.filter((p) => p.category === 'moto').length,
-    },
-    {
-      id: 'scoot',
-      labelFr: 'Trottinettes & Scooters',
-      labelAr: 'سكوترات وتروتينيت',
-      count: PRODUCTS.filter((p) => p.category === 'scoot').length,
-    },
-    {
-      id: 'piece',
-      labelFr: 'Casques & Pièces',
-      labelAr: 'خوذات وقطع غيار',
-      count: PRODUCTS.filter((p) => p.category === 'piece').length,
-    },
-  ];
+  const visibleProducts = PRODUCTS.filter(
+    (p) => activeCategory === 'all' || p.category === activeCategory
+  );
 
-  const filteredProducts = PRODUCTS.filter(
-    (item) => activeCategory === 'all' || item.category === activeCategory
-  ).sort((a, b) => {
-    if (sortBy === 'price-asc') return a.priceDh - b.priceDh;
-    if (sortBy === 'range-desc') return b.rangeKm - a.rangeKm;
-    return 0;
-  });
+  const updateCarouselMetrics = useCallback(() => {
+    const lst = listRef.current;
+    if (!lst || viewMode === 'grid') {
+      const n = visibleProducts.length;
+      setCarouselPos(n ? `${n} / ${n}` : '');
+      return;
+    }
+    const cards = Array.from(lst.querySelectorAll<HTMLElement>('.mdl'));
+    const n = cards.length;
+    const w = cards[0] ? cards[0].offsetWidth + 16 : 1;
+    const sl = Math.abs(lst.scrollLeft);
+    const i = Math.min(Math.max(n - 1, 0), Math.round(sl / w));
+    setCarouselPos(n ? `${i + 1} / ${n}` : '');
+    setCanPrev(sl >= 4);
+    setCanNext(sl + lst.clientWidth < lst.scrollWidth - 4);
+    if (sl > 24) {
+      setHideHint(true);
+    }
 
-  const toggleXray = (id: string) => {
-    setXrayCards((prev) => ({ ...prev, [id]: !prev[id] }));
+    const activeCard = cards[i];
+    const activeId = activeCard?.dataset.id || null;
+    const activeProd = PRODUCTS.find((p) => p.id === activeId);
+    if (activeProd && activeProd.category !== 'piece') {
+      onCarouselModelChange(activeProd.id);
+    } else {
+      onCarouselModelChange(null);
+    }
+  }, [visibleProducts.length, viewMode, onCarouselModelChange]);
+
+  useEffect(() => {
+    const lst = listRef.current;
+    if (lst) {
+      lst.scrollLeft = 0;
+    }
+    updateCarouselMetrics();
+  }, [activeCategory, viewMode, lang, updateCarouselMetrics]);
+
+  useEffect(() => {
+    const lst = listRef.current;
+    if (!lst) return;
+    const onScroll = () => requestAnimationFrame(updateCarouselMetrics);
+    lst.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', updateCarouselMetrics);
+    return () => {
+      lst.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', updateCarouselMetrics);
+    };
+  }, [updateCarouselMetrics]);
+
+  const stepCarousel = (dir: -1 | 1) => {
+    const lst = listRef.current;
+    if (!lst) return;
+    const firstCard = lst.querySelector<HTMLElement>('.mdl');
+    const stepWidth = firstCard ? firstCard.offsetWidth + 16 : 300;
+    const prefersReduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    lst.scrollBy({
+      left: dir * (lang === 'ar' ? -1 : 1) * stepWidth,
+      behavior: prefersReduced ? 'auto' : 'smooth',
+    });
   };
 
+  const renderSpecIcon = (type: ProductSpec['type']) => {
+    switch (type) {
+      case 'range':
+        return (
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z" />
+            <circle cx="12" cy="11" r="2.2" />
+          </svg>
+        );
+      case 'speed':
+        return (
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 17a8 8 0 1116 0" />
+            <path d="M12 17l4-5" />
+            <circle cx="12" cy="17" r="1" />
+          </svg>
+        );
+      case 'charge':
+        return (
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="8.5" />
+            <path d="M12 7.5V12l3 2" />
+          </svg>
+        );
+      case 'battery':
+        return (
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="7" width="16" height="10" rx="2" />
+            <path d="M21 10.5v3M7 10v4M11 10v4M15 10v4" />
+          </svg>
+        );
+      default:
+        return (
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+        );
+    }
+  };
+
+  const firstComparedProduct =
+    compareIds.length === 1
+      ? PRODUCTS.find((p) => p.id === compareIds[0]) || null
+      : null;
+
   return (
-    <section id="catalogue" className="py-16 sm:py-24 border-b border-[#262b2f]">
-      <div className="max-w-[1160px] mx-auto px-4 sm:px-6">
-        {/* Editorial Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+    <section id="catalogue">
+      <div className="wrap">
+        <div className="catalog-intro">
           <div>
-            <p className="text-xs font-mono-num text-[#9aa2a9] mb-2">
-              {lang === 'ar' ? '01. الكتالوج والمواصفات' : '01. Catalogue & Fiches Techniques'}
-            </p>
-            <h2 className="text-silver font-display font-bold text-[clamp(1.85rem,4vw,3rem)] leading-[1.08] tracking-tight">
-              {lang === 'ar' ? 'اختر وسيلة تنقلك الكهربائية' : 'Comparez les modèles disponibles'}
-            </h2>
-            <p className="text-[#9aa2a9] text-sm sm:text-base mt-2 max-w-[58ch]">
+            <p className="product-kicker">
               {lang === 'ar'
-                ? 'اختر اللون، تفحص المواصفات التقنية، قارن بين طرازين جنبًا إلى جنب، أو اطلب السعر والتوفر مباشرة عبر واتساب.'
-                : 'Testez les coloris, affichez les points techniques en rayon X, comparez deux véhicules côte à côte ou vérifiez la disponibilité sur WhatsApp.'}
+                ? 'اعثر على وسيلة تنقلك القادمة'
+                : 'TROUVEZ VOTRE PROCHAINE MOBILITÉ'}
+            </p>
+            <h2 className="si">
+              {lang === 'ar' ? 'الكتالوج' : 'Le catalogue'}
+            </h2>
+            <p className="lead">
+              {lang === 'ar'
+                ? 'قارن بين الطرازات، افتح البطاقة التقنية السريعة، ثم تواصل معنا عبر واتساب لتأكيد السعر والتوفر في بركان.'
+                : 'Comparez les modèles, inspectez la fiche technique rapide, puis demandez une confirmation immédiate sur WhatsApp.'}
             </p>
           </div>
+        </div>
 
-          {/* Sort & Mobile View Controls */}
-          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-end">
-            <div className="inline-flex items-center gap-2 bg-[#141719] border border-[#262b2f] rounded px-3 py-1.5">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-[#9aa2a9]" />
-              <label htmlFor="catalog-sort" className="sr-only">
-                {lang === 'ar' ? 'ترتيب حسب' : 'Trier par'}
-              </label>
-              <select
-                id="catalog-sort"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'default' | 'price-asc' | 'range-desc')}
-                className="bg-transparent text-xs sm:text-sm font-medium text-[#f2f4f3] focus:outline-none cursor-pointer"
-              >
-                <option value="default" className="bg-[#141719]">
-                  {lang === 'ar' ? 'الترتيب الافتراضي' : 'Tri recommandé'}
-                </option>
-                <option value="price-asc" className="bg-[#141719]">
-                  {lang === 'ar' ? 'السعر: من الأقل للأعلى' : 'Prix : croissant'}
-                </option>
-                <option value="range-desc" className="bg-[#141719]">
-                  {lang === 'ar' ? 'المدى: الأعلى أولًا' : 'Autonomie : maximale'}
-                </option>
-              </select>
-            </div>
+        {/* Category Filter Tabs */}
+        <div
+          className="tabs"
+          role="group"
+          aria-label={
+            lang === 'ar' ? 'تصفية حسب الفئة' : 'Filtrer par catégorie'
+          }
+        >
+          {[
+            { id: 'all' as const, fr: 'Toutes', ar: 'الكل' },
+            {
+              id: 'moto' as const,
+              fr: 'Motos Électriques',
+              ar: 'دراجات كهربائية',
+            },
+            {
+              id: 'scoot' as const,
+              fr: 'Trottinettes & Scooters',
+              ar: 'سكوترات ودراجات صغيرة',
+            },
+            {
+              id: 'piece' as const,
+              fr: 'Casques & Pièces',
+              ar: 'خوذات وقطع غيار',
+            },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              aria-pressed={activeCategory === t.id}
+              onClick={() => onSelectCategory(t.id)}
+            >
+              {lang === 'ar' ? t.ar : t.fr}
+            </button>
+          ))}
+        </div>
 
-            {/* Mobile compact toggle */}
-            <div className="flex sm:hidden items-center bg-[#141719] border border-[#262b2f] rounded p-0.5">
-              <button
-                type="button"
-                onClick={() => setMobileCompact(false)}
-                aria-label="Vue détaillée"
-                className={`p-1.5 rounded transition-colors ${
-                  !mobileCompact ? 'bg-[#2dff6e] text-[#05150b]' : 'text-[#9aa2a9]'
-                }`}
-              >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobileCompact(true)}
-                aria-label="Vue liste compacte"
-                className={`p-1.5 rounded transition-colors ${
-                  mobileCompact ? 'bg-[#2dff6e] text-[#05150b]' : 'text-[#9aa2a9]'
-                }`}
-              >
-                <List className="w-4 h-4" />
-              </button>
-            </div>
+        {/* Carousel Bar with Counter, Swipe Hint, Prev/Next Arrows & Carousel/Grid Toggle */}
+        <div className="carbar">
+          <span id="cpos" aria-live="polite">
+            {carouselPos}
+          </span>
+          {viewMode === 'carousel' && !hideHint && (
+            <span className="carhint" id="chint">
+              {lang === 'ar'
+                ? 'اسحب لعرض الطرازات'
+                : 'Glissez pour voir les modèles'}
+            </span>
+          )}
+          <div className="carbtns">
+            <button
+              type="button"
+              onClick={() =>
+                setViewMode((prev) =>
+                  prev === 'carousel' ? 'grid' : 'carousel'
+                )
+              }
+              aria-label={
+                viewMode === 'carousel'
+                  ? lang === 'ar'
+                    ? 'عرض كشبكة'
+                    : 'Afficher en grille'
+                  : lang === 'ar'
+                  ? 'عرض كشريط التمرير'
+                  : 'Afficher en carrousel'
+              }
+              title={
+                viewMode === 'carousel'
+                  ? lang === 'ar'
+                    ? 'عرض كشبكة'
+                    : 'Vue grille'
+                  : lang === 'ar'
+                  ? 'عرض كشريط التمرير'
+                  : 'Vue carrousel'
+              }
+              className={viewMode === 'grid' ? 'active-mode' : ''}
+            >
+              {viewMode === 'carousel' ? (
+                <LayoutGrid className="w-5 h-5" />
+              ) : (
+                <GalleryHorizontal className="w-5 h-5" />
+              )}
+            </button>
+
+            {viewMode === 'carousel' && (
+              <>
+                <button
+                  type="button"
+                  id="cprev"
+                  disabled={!canPrev}
+                  onClick={() => stepCarousel(-1)}
+                  aria-label={
+                    lang === 'ar' ? 'الطراز السابق' : 'Modèle précédent'
+                  }
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M15 5l-7 7 7 7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  id="cnext"
+                  disabled={!canNext}
+                  onClick={() => stepCarousel(1)}
+                  aria-label={
+                    lang === 'ar' ? 'الطراز التالي' : 'Modèle suivant'
+                  }
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M9 5l7 7-7 7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    />
+                  </svg>
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Category Filter Tabs (Functional Segmented Controls) */}
+        {/* Clean Mockup v11 Product List (#list) with Quick-View Trigger */}
         <div
-          role="group"
-          aria-label={lang === 'ar' ? 'تصفية حسب الفئة' : 'Filtrer par catégorie'}
-          className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar"
+          id="list"
+          ref={listRef}
+          role="region"
+          aria-roledescription={viewMode === 'carousel' ? 'carrousel' : undefined}
+          aria-label={lang === 'ar' ? 'طرازات NeoRide' : 'Modèles NeoRide'}
+          tabIndex={0}
+          className={viewMode === 'grid' ? 'grid-mode' : ''}
         >
-          {categories.map((cat) => {
-            const active = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                aria-pressed={active}
-                onClick={() => onSelectCategory(cat.id)}
-                className={`inline-flex items-center gap-2 min-h-[44px] px-4 py-2 rounded text-xs sm:text-sm font-semibold border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                  active
-                    ? 'bg-[#2dff6e] text-[#05150b] border-[#2dff6e]'
-                    : 'bg-[#141719] text-[#d0d6dc] border-[#262b2f] hover:border-[#3a4147] hover:text-white'
-                }`}
-              >
-                <span>{lang === 'ar' ? cat.labelAr : cat.labelFr}</span>
-                <span
-                  className={`text-xs font-mono-num ${
-                    active ? 'text-[#05150b]/80' : 'text-[#9aa2a9]'
-                  }`}
-                >
-                  ({cat.count})
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Responsive Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => {
-            const activeColorId = selectedColors[product.id] || product.colors[0]?.id;
-            const activeColorObj =
-              product.colors.find((c) => c.id === activeColorId) || product.colors[0];
-            const isCompared = compareIds.includes(product.id);
-            const isXray = !!xrayCards[product.id];
-            const isVehicle = product.category !== 'piece';
-
-            const waMessage =
+          {visibleProducts.map((x) => {
+            const isSelected = compareIds.includes(x.id);
+            const waMsg =
               lang === 'ar'
-                ? `السلام عليكم NeoRide، أنا مهتم بـ: ${product.nameAr} (${activeColorObj.nameAr} — ${product.priceFormatted} درهم). واش ممكن تعطيوني الثمن النهائي والتوفر فالمعرض؟`
-                : `Bonjour NeoRide, je suis intéressé par : ${product.name} (Finition ${activeColorObj.nameFr} — ${product.priceFormatted} DH). Pouvez-vous me renseigner sur le prix et la disponibilité ?`;
+                ? `السلام عليكم NeoRide، أنا مهتم بـ: ${x.name}. واش ممكن تعطيوني الثمن والتوفر؟`
+                : `Bonjour NeoRide, je suis intéressé par : ${x.name}. Pouvez-vous me renseigner sur le prix et la disponibilité ?`;
+
+            const compareBtnText = isSelected
+              ? lang === 'ar'
+                ? '✓ في المقارنة'
+                : '✓ Comparé'
+              : firstComparedProduct
+              ? (lang === 'ar' ? 'قارن مع ' : 'VS ') +
+                firstComparedProduct.name
+              : lang === 'ar'
+              ? 'قارن'
+              : 'Comparer';
+
+            const rawSpecs: [string, string, ProductSpec['type'], number?][] =
+              x.id === 'nr1-sport'
+                ? [
+                    ['90', lang === 'ar' ? 'كم مدى السير' : 'km d’autonomie', 'range', 100],
+                    ['85', lang === 'ar' ? 'كم/ساعة كحد أقصى' : 'km/h max', 'speed', 100],
+                    ['5 h', lang === 'ar' ? 'للشحن' : 'de charge', 'charge'],
+                    ['72V', lang === 'ar' ? 'بطارية 30Ah' : 'batterie 30Ah', 'battery'],
+                  ]
+                : x.id === 'urban-3000'
+                ? [
+                    ['70', lang === 'ar' ? 'كم مدى السير' : 'km d’autonomie', 'range', 78],
+                    ['70', lang === 'ar' ? 'كم/ساعة كحد أقصى' : 'km/h max', 'speed', 82],
+                    ['6 h', lang === 'ar' ? 'للشحن' : 'de charge', 'charge'],
+                    ['60V', lang === 'ar' ? 'بطارية 26Ah' : 'batterie 26Ah', 'battery'],
+                  ]
+                : x.id === 'eco-city'
+                ? [
+                    ['55', lang === 'ar' ? 'كم مدى السير' : 'km d’autonomie', 'range', 61],
+                    ['45', lang === 'ar' ? 'كم/ساعة كحد أقصى' : 'km/h max', 'speed', 53],
+                    ['5 h', lang === 'ar' ? 'للشحن' : 'de charge', 'charge'],
+                    ['48V', lang === 'ar' ? 'بطارية 20Ah' : 'batterie 20Ah', 'battery'],
+                  ]
+                : x.id === 'pro-x'
+                ? [
+                    ['40', lang === 'ar' ? 'كم مدى السير' : 'km d’autonomie', 'range', 44],
+                    ['35', lang === 'ar' ? 'كم/ساعة كحد أقصى' : 'km/h max', 'speed', 41],
+                    ['4 h', lang === 'ar' ? 'للشحن' : 'de charge', 'charge'],
+                    ['36V', lang === 'ar' ? 'بطارية 15Ah' : 'batterie 15Ah', 'battery'],
+                  ]
+                : x.id === 'casque-neoride'
+                ? [
+                    ['ECE', lang === 'ar' ? 'معيار 22.06' : 'norme 22.06', 'info'],
+                    ['S–XL', lang === 'ar' ? 'المقاسات' : 'tailles', 'info'],
+                    ['1', lang === 'ar' ? 'واقٍ مقاوم للخدش' : 'visière anti-rayures', 'info'],
+                  ]
+                : [
+                    ['26Ah', lang === 'ar' ? 'ليثيوم-أيون' : 'lithium-ion', 'battery'],
+                    ['60V', lang === 'ar' ? 'الجهد' : 'tension', 'battery'],
+                    ['Urban', lang === 'ar' ? 'متوافق مع 3000' : 'compatible 3000', 'info'],
+                  ];
 
             return (
               <article
-                key={product.id}
-                className="group flex flex-col bg-[#141719] border border-[#262b2f] hover:border-[#3a4248] rounded overflow-hidden transition-all duration-200 hover:-translate-y-0.5"
+                key={x.id}
+                className="mdl"
+                data-c={x.category}
+                data-id={x.id}
               >
-                {/* Visual Header */}
                 <div
-                  className={`relative bg-[#101315] border-b border-[#262b2f] overflow-hidden ${
-                    mobileCompact ? 'h-36 sm:h-auto sm:aspect-[16/10]' : 'aspect-[16/10]'
-                  }`}
+                  className="product-visual"
+                  onClick={() => onInspectProduct(x)}
+                  title={lang === 'ar' ? 'اضغط لعرض التفاصيل' : 'Cliquer pour vue rapide'}
                 >
-                  <div
-                    onClick={() => onInspectProduct(product)}
-                    className="w-full h-full cursor-pointer"
-                  >
-                    <VehicleIllustration
-                      kind={product.artKind}
-                      accentColor={activeColorObj.hex}
-                      showCallouts={isXray}
-                      lang={lang}
-                      label={lang === 'ar' ? product.nameAr : product.name}
-                    />
-                  </div>
-
-                  {/* Top-Right Interactive X-Ray Toggle & Quick-View Trigger */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => toggleXray(product.id)}
-                      aria-pressed={isXray}
-                      className={`inline-flex items-center gap-1 min-h-[32px] px-2.5 py-1 rounded text-[11px] font-semibold border backdrop-blur-sm transition-colors cursor-pointer whitespace-nowrap ${
-                        isXray
-                          ? 'bg-[#2dff6e] text-[#05150b] border-[#2dff6e]'
-                          : 'bg-[#0d0f10]/85 text-[#d0d6dc] border-[#2e3438] hover:text-white'
-                      }`}
-                    >
-                      <Layers className="w-3 h-3" />
-                      <span>{lang === 'ar' ? 'تفاصيل تقنية' : 'Rayon X'}</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => onInspectProduct(product)}
-                      aria-label={lang === 'ar' ? 'عرض البطاقة التقنية' : 'Voir la fiche complète'}
-                      className="inline-flex items-center justify-center w-8 h-8 rounded bg-[#0d0f10]/85 text-[#d0d6dc] hover:text-[#2dff6e] border border-[#2e3438] backdrop-blur-sm transition-colors cursor-pointer"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  {/* Bottom-Left Color Swatch Picker */}
-                  {product.colors.length > 1 && (
-                    <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-[#0d0f10]/85 border border-[#262b2f] px-2.5 py-1 rounded backdrop-blur-sm">
-                      {product.colors.map((c) => {
-                        const selected = c.id === activeColorObj.id;
-                        return (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() =>
-                              setSelectedColors((prev) => ({ ...prev, [product.id]: c.id }))
-                            }
-                            aria-label={lang === 'ar' ? c.nameAr : c.nameFr}
-                            title={lang === 'ar' ? c.nameAr : c.nameFr}
-                            className={`w-4 h-4 rounded-full transition-transform cursor-pointer ${
-                              selected ? 'scale-125 ring-2 ring-white ring-offset-1 ring-offset-[#0d0f10]' : 'opacity-70 hover:opacity-100'
-                            }`}
-                            style={{ backgroundColor: c.hex }}
-                          />
-                        );
-                      })}
-                      <span className="text-[11px] text-[#c5ccd0] ms-1 whitespace-nowrap">
-                        {lang === 'ar' ? activeColorObj.nameAr : activeColorObj.nameFr}
-                      </span>
-                    </div>
-                  )}
+                  <VehicleIllustration
+                    kind={x.artKind}
+                    accentColor={/Urban/.test(x.name) ? '#aeb8b2' : '#2dff6e'}
+                    label={x.name}
+                  />
                 </div>
 
-                {/* Card Body */}
-                <div className="p-5 flex-1 flex flex-col justify-between gap-5">
-                  <div>
-                    {/* Quiet unboxed metadata line (Zero-Pill Discipline) */}
-                    <div className="text-xs text-[#9aa2a9] mb-1.5">
-                      {lang === 'ar' ? product.kickerAr : product.kickerFr}
-                    </div>
-
-                    <div className="flex items-baseline justify-between gap-3">
-                      <h3 className="font-display font-bold text-xl text-[#f2f4f3] group-hover:text-[#2dff6e] transition-colors">
-                        <button
-                          type="button"
-                          onClick={() => onInspectProduct(product)}
-                          className="text-start cursor-pointer hover:underline"
-                        >
-                          {lang === 'ar' ? product.nameAr : product.name}
-                        </button>
-                      </h3>
-
-                      <div className="font-display font-extrabold text-xl text-[#2dff6e] tabular-nums bidi-plain shrink-0">
-                        {product.priceFormatted} <span className="text-xs font-normal text-[#9aa2a9]">DH</span>
-                      </div>
-                    </div>
-
-                    <p className="text-xs sm:text-sm text-[#9aa2a9] mt-1.5 line-clamp-2">
-                      {lang === 'ar' ? product.subtitleAr : product.subtitleFr}
-                    </p>
-
-                    {/* 2x2 Spec Grid with Tabular Numerals */}
-                    <ul className="grid grid-cols-2 gap-2.5 mt-4 pt-4 border-t border-[#262b2f]">
-                      {product.specs.map((sp, idx) => (
-                        <li
-                          key={idx}
-                          className="p-2.5 rounded bg-[#0d0f10]/70 border border-[#22272b]"
-                        >
-                          <div className="font-display font-bold text-base sm:text-lg text-[#f2f4f3] tabular-nums bidi-plain leading-tight">
-                            {sp.value}
-                          </div>
-                          <div className="text-[11px] text-[#9aa2a9] mt-0.5">
-                            {lang === 'ar' ? sp.labelAr : sp.labelFr}
-                          </div>
-                          {typeof sp.ratio === 'number' && (
-                            <div
-                              aria-hidden="true"
-                              className="h-1 w-full bg-[#22272b] rounded-full overflow-hidden mt-2"
-                            >
-                              <div
-                                className="h-full bg-[#2dff6e]"
-                                style={{ width: `${sp.ratio}%` }}
-                              />
-                            </div>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Card Actions */}
-                  <div className="pt-2 space-y-2">
-                    <div className="flex items-center justify-between text-xs text-[#9aa2a9] mb-2">
-                      <span>
+                <div className="product-body">
+                  <span className="product-kicker">
+                    {x.category === 'moto'
+                      ? lang === 'ar'
+                        ? 'دراجة كهربائية'
+                        : 'MOTO ÉLECTRIQUE'
+                      : x.category === 'scoot'
+                      ? lang === 'ar'
+                        ? 'تنقل حضري'
+                        : 'MOBILITÉ URBAINE'
+                      : lang === 'ar'
+                      ? 'تجهيزات وقطع غيار'
+                      : 'ÉQUIPEMENT & PIÈCES'}
+                  </span>
+                  <h3 className="si">{x.name}</h3>
+                  <div className="product-price-row">
+                    <div className="pr">{x.priceFormatted} DH</div>
+                    {x.monthlyEstimateDh && (
+                      <div className="mo">
                         {lang === 'ar'
-                          ? 'متوفر للمعاينة في معرض بركان'
-                          : 'Renseignements & essai à Berkane'}
-                      </span>
-                      {product.costPer100KmDh > 0 && (
-                        <span className="font-mono-num text-[#d0d6dc]">
-                          ~{product.costPer100KmDh.toString().replace('.', ',')} DH / 100 km
-                        </span>
-                      )}
-                    </div>
+                          ? `أو ~${x.monthlyEstimateDh} درهم/شهر`
+                          : `ou ~${x.monthlyEstimateDh} DH/mois`}
+                      </div>
+                    )}
+                  </div>
+                </div>
 
+                <ul className="spx">
+                  {rawSpecs.map(([val, lbl, iconType, ratio], idx) => (
+                    <li key={idx} className="st">
+                      {renderSpecIcon(iconType)}
+                      <b>{val}</b>
+                      <span>{lbl}</span>
+                      {typeof ratio === 'number' && (
+                        <i className="mt" aria-hidden="true">
+                          <b style={{ width: `${ratio}%` }} />
+                        </i>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="buy">
+                  <span className="stock">
+                    {lang === 'ar'
+                      ? 'استفسر في المعرض'
+                      : 'Renseignements en magasin'}
+                  </span>
+                  <div className="product-actions">
                     <a
-                      href={buildWhatsAppUrl(waMessage)}
+                      className="btn btn-g wa-link"
+                      href={buildWhatsAppUrl(waMsg)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 bg-[#2dff6e] hover:bg-white text-[#05150b] font-bold text-sm rounded transition-colors whitespace-nowrap"
                     >
-                      <span>
-                        {lang === 'ar' ? 'استفسر عن السعر والتوفر' : 'Vérifier prix & disponibilité'}
+                      {lang === 'ar'
+                        ? 'سول على الثمن والتوفر'
+                        : 'Vérifier prix & disponibilité'}{' '}
+                      <span className="arr" aria-hidden="true">
+                        ↗
                       </span>
-                      <ArrowUpRight className="w-4 h-4 flip-rtl" />
                     </a>
 
-                    {isVehicle ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          onClick={() => onToggleCompare(product.id)}
-                          aria-pressed={isCompared}
-                          className={`inline-flex items-center justify-center gap-1.5 min-h-[40px] px-3 py-1.5 text-xs font-semibold rounded border transition-colors cursor-pointer whitespace-nowrap ${
-                            isCompared
-                              ? 'bg-[#2dff6e]/15 text-[#2dff6e] border-[#2dff6e]'
-                              : 'bg-[#1a1e21] hover:bg-[#242a2e] text-[#d0d6dc] border-[#2e3438]'
-                          }`}
-                        >
-                          {isCompared && <Check className="w-3.5 h-3.5" />}
-                          <span>
-                            {isCompared
-                              ? lang === 'ar'
-                                ? 'مضاف للمقارنة'
-                                : 'Dans le comparateur'
-                              : lang === 'ar'
-                              ? 'قارن هذا الطراز'
-                              : 'Comparer'}
-                          </span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => onBookTestRide(product.id)}
-                          className="inline-flex items-center justify-center gap-1.5 min-h-[40px] px-3 py-1.5 text-xs font-semibold rounded bg-[#1a1e21] hover:bg-[#242a2e] text-[#f2f4f3] border border-[#2e3438] transition-colors cursor-pointer whitespace-nowrap"
-                        >
-                          <span>{lang === 'ar' ? 'جرّبه في بركان' : 'Réserver un essai'}</span>
-                        </button>
-                      </div>
-                    ) : (
+                    <div
+                      className={
+                        x.category !== 'piece'
+                          ? 'product-secondary-actions'
+                          : 'w-full'
+                      }
+                    >
                       <button
                         type="button"
-                        onClick={() => onInspectProduct(product)}
-                        className="w-full inline-flex items-center justify-center gap-1.5 min-h-[40px] px-3 py-1.5 text-xs font-semibold rounded bg-[#1a1e21] hover:bg-[#242a2e] text-[#f2f4f3] border border-[#2e3438] transition-colors cursor-pointer whitespace-nowrap"
+                        className="btn btn-o"
+                        onClick={() => onInspectProduct(x)}
                       >
-                        <span>
-                          {lang === 'ar' ? 'عرض التفاصيل والتوافق' : 'Voir détails & compatibilité'}
-                        </span>
+                        {lang === 'ar' ? 'نظرة سريعة' : 'Vue rapide'}
                       </button>
-                    )}
+
+                      {x.category !== 'piece' && (
+                        <button
+                          type="button"
+                          className={`btn btn-o cmp-btn ${
+                            isSelected ? 'sel' : ''
+                          }`}
+                          aria-pressed={isSelected}
+                          onClick={() => onToggleCompare(x.id)}
+                        >
+                          {compareBtnText}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </article>
@@ -406,41 +543,57 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
           })}
         </div>
 
-        {/* Voice Note & Personal Advice Conversion Strip */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center p-5 sm:p-6 rounded bg-[#141719] border border-[#262b2f]">
-          <div className="lg:col-span-8 flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="w-11 h-11 rounded-full bg-[#1a1e21] border border-[#2e3438] flex items-center justify-center shrink-0 text-[#2dff6e]">
-              <Mic className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-display font-bold text-base sm:text-lg text-[#f2f4f3]">
-                {lang === 'ar'
-                  ? 'هل تحتار بين طرازين؟ أرسل رسالة مكتوبة أو أوديو عبر واتساب'
-                  : 'Vous hésitez entre deux modèles ? Écrivez ou envoyez un vocal sur WhatsApp'}
-              </h3>
-              <p className="text-xs sm:text-sm text-[#9aa2a9] mt-0.5">
-                {lang === 'ar'
-                  ? 'أخبرنا بمسافتك اليومية وميزانيتك، أو أرسل صورة لقطعة الغيار التي تبحث عنها — نرد عليك بسرعة من معرض بركان.'
-                  : 'Indiquez votre trajet quotidien et votre budget (ou envoyez la photo d’une pièce) : notre équipe à Berkane vous répond rapidement.'}
-              </p>
-            </div>
-          </div>
-
-          <div className="lg:col-span-4 flex sm:justify-end">
-            <a
-              href={buildWhatsAppUrl(
-                lang === 'ar'
-                  ? 'السلام عليكم NeoRide، واش تقدرو تعاونوني نختار موطور كهربائي على حساب الميزانية والمسافات ديالي؟'
-                  : 'Bonjour NeoRide, pouvez-vous m’aider à choisir une moto électrique selon mon budget et mes trajets ?'
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[46px] px-5 py-2.5 bg-[#2dff6e] hover:bg-white text-[#05150b] font-bold text-sm rounded transition-colors whitespace-nowrap"
+        {/* Vocal WhatsApp Note */}
+        <p className="vocal">
+          <span className="vic" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <span>{lang === 'ar' ? 'ساعدني في الاختيار' : 'M’aider à choisir'}</span>
-              <ArrowUpRight className="w-4 h-4 flip-rtl" />
-            </a>
+              <rect x="9" y="3" width="6" height="11" rx="3" />
+              <path d="M5 11a7 7 0 0014 0M12 18v3" />
+            </svg>
+          </span>
+          <span>
+            {lang === 'ar'
+              ? 'جواب سريع — تقدر تكتب ولا تصيفط رسالة صوتية (أوديو) على واتساب.'
+              : 'Réponse rapide — vous pouvez écrire ou envoyer un message vocal (audio) sur WhatsApp.'}
+          </span>
+        </p>
+
+        {/* Conversion Strip */}
+        <div className="conversion-strip">
+          <div>
+            <strong>
+              {lang === 'ar'
+                ? 'هل تحتار بين طرازين؟'
+                : 'Vous hésitez entre deux modèles ?'}
+            </strong>
+            <p>
+              {lang === 'ar'
+                ? 'أرسل لنا تفاصيل تنقلاتك اليومية وميزانيتك، وسنساعدك في مقارنة الخيارات المتاحة.'
+                : 'Envoyez-nous votre trajet quotidien et votre budget. On vous aidera à comparer les options disponibles.'}
+            </p>
           </div>
+          <a
+            className="btn btn-g wa-link"
+            href={buildWhatsAppUrl(
+              lang === 'ar'
+                ? 'السلام عليكم NeoRide، واش تقدرو تعاونوني نختار موطور كهربائي على حساب الميزانية والمسافات ديالي؟'
+                : 'Bonjour NeoRide, pouvez-vous m’aider à choisir une moto électrique selon mon budget et mes trajets ?'
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {lang === 'ar' ? 'ساعدني في الاختيار' : 'M’aider à choisir'}{' '}
+            <span className="arr" aria-hidden="true">
+              ↗
+            </span>
+          </a>
         </div>
       </div>
     </section>

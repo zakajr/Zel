@@ -1,39 +1,37 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Volume2, VolumeX, Zap, ArrowUpRight, ArrowRight, Globe } from 'lucide-react';
-import { Lang, getShowroomStatus } from '../data/neorideData';
+import { Lang } from '../data/neorideData';
 
 interface ElectricRoadHeroProps {
   lang: Lang;
-  onToggleLang: () => void;
-  onSelectCategory: (cat: 'all' | 'moto' | 'scoot' | 'piece') => void;
 }
 
-export const ElectricRoadHero: React.FC<ElectricRoadHeroProps> = ({
-  lang,
-  onToggleLang,
-  onSelectCategory,
-}) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+type SoundStatus = 'on' | 'muted' | 'fail';
+
+export const ElectricRoadHero: React.FC<ElectricRoadHeroProps> = ({ lang }) => {
   const heroRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const numRef = useRef<HTMLDivElement | null>(null);
+  const thrRef = useRef<HTMLButtonElement | null>(null);
+  const sndRef = useRef<HTMLButtonElement | null>(null);
 
-  const [speedKmh, setSpeedKmh] = useState<number>(0);
-  const [isHolding, setIsHolding] = useState<boolean>(false);
-  const [cruiseTarget, setCruiseTarget] = useState<number | null>(null); // null, 0.55 (45km/h), 0.82 (70km/h), 1.0 (85km/h)
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
-  const [audioUnavailable, setAudioUnavailable] = useState<boolean>(false);
-  const [showroomStatus, setShowroomStatus] = useState(() => getShowroomStatus());
+  const [soundState, setSoundState] = useState<SoundStatus>('on');
+  const [isAccelerating, setIsAccelerating] = useState<boolean>(false);
 
-  // Refs for animation loop and WebAudio
-  const stateRef = useRef({
-    velocity: 0.07,
-    targetVelocity: 0.07,
-    offset: 0,
-    isVisible: true,
-    soundMuted: false,
+  // Direct mutable state for 60fps requestAnimationFrame loop & WebAudio
+  const simRef = useRef({
+    v: 0.07,
+    tg: 0.07,
+    off: 0,
+    sp: -1,
+    vis: true,
+    held: false,
+    mute: false,
+    fail: false,
   });
 
-  const audioRef = useRef<{
-    ctx: AudioContext;
+  // WebAudio graph references matching mockup v11
+  const audioNodesRef = useRef<{
+    ac: AudioContext;
     master: GainNode;
     wA: OscillatorNode;
     wB: OscillatorNode;
@@ -50,759 +48,711 @@ export const ElectricRoadHero: React.FC<ElectricRoadHeroProps> = ({
     gS: GainNode;
   } | null>(null);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setShowroomStatus(getShowroomStatus());
-    }, 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const initAudio = useCallback(() => {
-    if (audioRef.current) {
-      if (audioRef.current.ctx.state === 'suspended') {
-        audioRef.current.ctx.resume().catch(() => setAudioUnavailable(true));
-      }
-      return;
-    }
+  const aud = useCallback(() => {
+    if (simRef.current.fail) return;
     try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      const ctx = new AudioCtx();
-      const mkOsc = (type: OscillatorType, freq: number) => {
-        const o = ctx.createOscillator();
-        o.type = type;
-        o.frequency.value = freq;
-        return o;
-      };
-      const mkGain = () => {
-        const g = ctx.createGain();
-        g.gain.value = 0;
-        return g;
-      };
+      if (!audioNodesRef.current) {
+        const Ctx =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext })
+            .webkitAudioContext;
+        if (!Ctx) throw new Error('No WebAudio');
 
-      const master = ctx.createGain();
-      master.gain.value = 0;
-      const comp = ctx.createDynamicsCompressor();
-      master.connect(comp);
-      comp.connect(ctx.destination);
+        const ac = new Ctx();
+        const master = ac.createGain();
+        master.gain.value = 0;
 
-      const lp = ctx.createBiquadFilter();
-      lp.type = 'lowpass';
-      lp.frequency.value = 2600;
-      lp.Q.value = 0.5;
-      lp.connect(master);
+        const comp = ac.createDynamicsCompressor();
+        comp.threshold.value = -14;
+        comp.ratio.value = 4;
+        master.connect(comp);
+        comp.connect(ac.destination);
 
-      const wA = mkOsc('sawtooth', 220);
-      const wB = mkOsc('triangle', 440);
-      const hum = mkOsc('sine', 50);
-      const gA = mkGain();
-      const gB = mkGain();
-      const gH = mkGain();
+        // Motor oscillators: sawtooth 220Hz + triangle 440Hz -> lowpass 1600Hz
+        const wA = ac.createOscillator();
+        const wB = ac.createOscillator();
+        const wF = ac.createBiquadFilter();
+        const gA = ac.createGain();
+        const gB = ac.createGain();
 
-      wA.connect(gA);
-      gA.connect(lp);
-      wB.connect(gB);
-      gB.connect(lp);
-      hum.connect(gH);
-      gH.connect(master);
+        wA.type = 'sawtooth';
+        wB.type = 'triangle';
+        wF.type = 'lowpass';
+        wF.frequency.value = 1600;
+        wA.frequency.value = 220;
+        wB.frequency.value = 440;
+        gA.gain.value = 0;
+        gB.gain.value = 0;
 
-      const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        data[i] = Math.random() * 2 - 1;
+        wA.connect(gA);
+        wB.connect(gB);
+        gA.connect(wF);
+        gB.connect(wF);
+        wF.connect(master);
+
+        // Sub-bass sine 50Hz
+        const hum = ac.createOscillator();
+        const gH = ac.createGain();
+        hum.type = 'sine';
+        hum.frequency.value = 50;
+        gH.gain.value = 0;
+        hum.connect(gH);
+        gH.connect(master);
+
+        // 2-second white noise buffer for road tire roar, wind buffeting, and inverter whine
+        const sr = ac.sampleRate;
+        const nb = ac.createBuffer(1, sr * 2, sr);
+        const d = nb.getChannelData(0);
+        for (let i = 0; i < d.length; i++) {
+          d[i] = Math.random() * 2 - 1;
+        }
+
+        const ns = ac.createBufferSource();
+        ns.buffer = nb;
+        ns.loop = true;
+
+        // Filter 1: Bandpass 140Hz -> Lowpass 900Hz -> gN
+        const nf = ac.createBiquadFilter();
+        const nf2 = ac.createBiquadFilter();
+        const gN = ac.createGain();
+        nf.type = 'bandpass';
+        nf.frequency.value = 140;
+        nf.Q.value = 1.4;
+        nf2.type = 'lowpass';
+        nf2.frequency.value = 900;
+        gN.gain.value = 0;
+        ns.connect(nf);
+        nf.connect(nf2);
+        nf2.connect(gN);
+        gN.connect(master);
+
+        // Filter 2: Lowpass 320Hz + LFO 8Hz -> gT
+        const tlp = ac.createBiquadFilter();
+        const gT = ac.createGain();
+        const tlfo = ac.createOscillator();
+        const tlg = ac.createGain();
+        tlp.type = 'lowpass';
+        tlp.frequency.value = 320;
+        tlp.Q.value = 3.5;
+        gT.gain.value = 0;
+        tlfo.frequency.value = 8;
+        tlg.gain.value = 0;
+        tlfo.connect(tlg);
+        tlg.connect(gT.gain);
+        ns.connect(tlp);
+        tlp.connect(gT);
+        gT.connect(master);
+
+        // Filter 3: Bandpass 2400Hz Q=6 -> gS
+        const sf = ac.createBiquadFilter();
+        const gS = ac.createGain();
+        sf.type = 'bandpass';
+        sf.frequency.value = 2400;
+        sf.Q.value = 6;
+        gS.gain.value = 0;
+        ns.connect(sf);
+        sf.connect(gS);
+        gS.connect(master);
+
+        wA.start();
+        wB.start();
+        hum.start();
+        tlfo.start();
+        ns.start();
+
+        audioNodesRef.current = {
+          ac,
+          master,
+          wA,
+          wB,
+          hum,
+          nf2,
+          gA,
+          gB,
+          gH,
+          gN,
+          gT,
+          tlg,
+          tlfo,
+          tlp,
+          gS,
+        };
       }
 
-      const nz = ctx.createBufferSource();
-      nz.buffer = buf;
-      nz.loop = true;
-      const nf2 = ctx.createBiquadFilter();
-      nf2.type = 'bandpass';
-      nf2.frequency.value = 600;
-      nf2.Q.value = 0.7;
-      const gN = mkGain();
-      nz.connect(nf2);
-      nf2.connect(gN);
-      gN.connect(master);
-
-      const tz = ctx.createBufferSource();
-      tz.buffer = buf;
-      tz.loop = true;
-      const tlp = ctx.createBiquadFilter();
-      tlp.type = 'lowpass';
-      tlp.frequency.value = 500;
-      const gT = mkGain();
-      tz.connect(tlp);
-      tlp.connect(gT);
-      gT.connect(master);
-
-      const tlfo = mkOsc('sine', 8);
-      const tlg = ctx.createGain();
-      tlg.gain.value = 0;
-      tlfo.connect(tlg);
-      tlg.connect(gT.gain);
-
-      const ths = ctx.createBufferSource();
-      ths.buffer = buf;
-      ths.loop = true;
-      const hp = ctx.createBiquadFilter();
-      hp.type = 'highpass';
-      hp.frequency.value = 2600;
-      const gS = mkGain();
-      ths.connect(hp);
-      hp.connect(gS);
-      gS.connect(master);
-
-      [wA, wB, hum, nz, tz, tlfo, ths].forEach((n) => n.start());
-
-      audioRef.current = {
-        ctx,
-        master,
-        wA,
-        wB,
-        hum,
-        nf2,
-        gA,
-        gB,
-        gH,
-        gN,
-        gT,
-        tlg,
-        tlfo,
-        tlp,
-        gS,
-      };
+      if (audioNodesRef.current.ac.state === 'suspended') {
+        audioNodesRef.current.ac.resume().catch(() => {});
+      }
     } catch {
-      setAudioUnavailable(true);
+      simRef.current.fail = true;
+      setSoundState('fail');
     }
   }, []);
-
-  // Update target velocity when holding or cruising
-  useEffect(() => {
-    if (isHolding) {
-      stateRef.current.targetVelocity = 1;
-    } else if (cruiseTarget !== null) {
-      stateRef.current.targetVelocity = cruiseTarget;
-    } else {
-      stateRef.current.targetVelocity = 0.07;
-    }
-  }, [isHolding, cruiseTarget]);
-
-  useEffect(() => {
-    stateRef.current.soundMuted = !soundEnabled;
-  }, [soundEnabled]);
 
   useEffect(() => {
     const cv = canvasRef.current;
-    const heroEl = heroRef.current;
-    if (!cv || !heroEl) return;
+    const hero = heroRef.current;
+    const numEl = numRef.current;
+    const thr = thrRef.current;
+    if (!cv || !hero || !numEl || !thr) return;
 
-    const ctx = cv.getContext('2d');
-    if (!ctx) return;
+    const x = cv.getContext('2d');
+    if (!x) return;
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let width = 0;
-    let height = 0;
+    let W = 0;
+    let H = 0;
     let rafId = 0;
-    let lastReportedSpeed = 0;
+    const R = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const drawScene = () => {
-      const v = stateRef.current.velocity;
-      const off = stateRef.current.offset;
-      const cx = width / 2;
-      const vy = height * 0.41;
-      const sw = Math.max(width * 0.95, height * 0.8);
+    const E = (cx: number, cy: number, rx: number, ry: number) => {
+      x.beginPath();
+      x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      x.fill();
+      x.stroke();
+    };
 
-      ctx.fillStyle = '#0d0f10';
-      ctx.fillRect(0, 0, width, height);
+    const P = (pts: [number, number][], closePath = false) => {
+      x.beginPath();
+      pts.forEach((p, i) => (i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1])));
+      if (closePath) x.closePath();
+    };
 
-      // Horizon electric glow
-      const horizonGlow = ctx.createRadialGradient(cx, vy, 0, cx, vy, width * 0.7);
-      horizonGlow.addColorStop(0, `rgba(45, 255, 110, ${0.1 + 0.3 * v})`);
-      horizonGlow.addColorStop(1, 'rgba(45, 255, 110, 0)');
-      ctx.fillStyle = horizonGlow;
-      ctx.fillRect(0, 0, width, height);
+    // Compute smart non-overlapping coordinates so the motorcycle is 100% visible
+    // in the open theater lane on desktop and open middle window on mobile!
+    const getSceneCoords = () => {
+      const v = simRef.current.v;
+      const runFactor = Math.max(0, Math.min(1, (v - 0.07) / 0.93));
+      const isMobile = W <= 700;
+      const isRtl = document.documentElement.dir === 'rtl';
 
-      // Road surface triangle
-      ctx.fillStyle = '#141719';
-      ctx.beginPath();
-      ctx.moveTo(cx, vy);
-      ctx.lineTo(cx - sw, height);
-      ctx.lineTo(cx + sw, height);
-      ctx.fill();
-
-      // Road neon edges
-      ctx.save();
-      ctx.shadowColor = '#2dff6e';
-      ctx.shadowBlur = 10 + 18 * v;
-      ctx.strokeStyle = '#2dff6e';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(cx, vy);
-      ctx.lineTo(cx - sw, height);
-      ctx.moveTo(cx, vy);
-      ctx.lineTo(cx + sw, height);
-      ctx.stroke();
-      ctx.restore();
-
-      // Perspective center dashes
-      ctx.fillStyle = '#e4e8ea';
-      for (let i = 0; i < 14; i++) {
-        const z = ((i / 14) + off) % 1;
-        const p = Math.pow(z, 2.4);
-        const y = vy + (height - vy) * p;
-        const w = 1 + 14 * p;
-        const h = (4 + 90 * p) * (0.6 + v);
-        ctx.fillRect(cx - w / 2, y, w, h);
+      if (isMobile) {
+        // Mobile: Top copy + CTA row ends around ~34% H; bottom dock starts around ~77% H.
+        // Place horizon at 42% H and motorcycle at 66% H with compact scale so 100% of the
+        // road and rider sit inside the unobstructed middle window.
+        return {
+          cx: W * 0.5,
+          vy: H * 0.42,
+          by: H * 0.66,
+          bs: Math.min(W * 0.118, H * 0.088),
+        };
       }
 
-      // High-speed warp streaks
+      // Desktop: Place road & bike in the open right lane (66% W in LTR, 34% W in RTL),
+      // smoothly gliding toward center (54% / 46%) when holding accelerate and copy fades out!
+      const restX = isRtl ? W * 0.34 : W * 0.66;
+      const activeX = isRtl ? W * 0.46 : W * 0.54;
+      const cx = restX + (activeX - restX) * runFactor;
+
+      return {
+        cx,
+        vy: H * 0.38,
+        by: H * 0.74,
+        bs: Math.min(W, H) * 0.16,
+      };
+    };
+
+    const bike = (cx: number, by: number, bs: number) => {
+      const v = simRef.current.v;
+      const gl = Math.min(1, v * 1.15);
+      const lw = Math.max(1.2, bs * 0.025);
+
+      x.save();
+      x.translate(cx, by);
+      x.lineWidth = lw;
+      x.lineJoin = 'round';
+      x.lineCap = 'round';
+
+      const rg = x.createRadialGradient(0, bs * 0.1, 2, 0, bs * 0.1, bs * 1.9);
+      rg.addColorStop(0, `rgba(45,255,110,${0.22 + 0.38 * gl})`);
+      rg.addColorStop(0.45, `rgba(45,255,110,${0.06 + 0.14 * gl})`);
+      rg.addColorStop(1, 'rgba(45,255,110,0)');
+      x.fillStyle = rg;
+      x.fillRect(-bs * 2, -bs * 1.4, bs * 4, bs * 2.2);
+
+      x.fillStyle = 'rgba(0,0,0,.7)';
+      x.beginPath();
+      x.ellipse(0, bs * 0.48, bs * 0.55, bs * 0.11, 0, 0, Math.PI * 2);
+      x.fill();
+
+      x.fillStyle = '#07090a';
+      x.strokeStyle = '#252a2e';
+      E(0, bs * 0.08, bs * 0.21, bs * 0.42);
+
+      x.strokeStyle = `rgba(45,255,110,${0.2 + 0.45 * gl})`;
+      x.lineWidth = Math.max(1, bs * 0.016);
+      x.beginPath();
+      x.ellipse(0, bs * 0.08, bs * 0.15, bs * 0.34, 0, 0, Math.PI * 2);
+      x.stroke();
+
+      x.lineWidth = lw;
+      x.strokeStyle = '#2a3035';
+      P([
+        [-bs * 0.22, -bs * 0.18],
+        [-bs * 0.19, bs * 0.1],
+        [bs * 0.22, -bs * 0.18],
+        [bs * 0.19, bs * 0.1],
+      ]);
+      x.stroke();
+
+      x.fillStyle = '#0f1214';
+      x.strokeStyle = '#23282c';
+      P(
+        [
+          [-bs * 0.34, -bs * 0.2],
+          [-bs * 0.24, -bs * 0.68],
+          [bs * 0.24, -bs * 0.68],
+          [bs * 0.34, -bs * 0.2],
+          [bs * 0.18, -bs * 0.05],
+          [-bs * 0.18, -bs * 0.05],
+        ],
+        true
+      );
+      x.fill();
+      x.stroke();
+
+      x.save();
+      x.shadowColor = '#2dff6e';
+      x.shadowBlur = 12 + 22 * gl;
+      x.fillStyle = '#2dff6e';
+      x.fillRect(-bs * 0.18, -bs * 0.69, bs * 0.36, bs * 0.075);
+      x.fillStyle = '#d8ffe4';
+      x.fillRect(-bs * 0.12, -bs * 0.675, bs * 0.24, bs * 0.035);
+      x.restore();
+
+      x.fillStyle = '#0c0e10';
+      x.strokeStyle = '#1b1f22';
+      P(
+        [
+          [-bs * 0.3, -bs * 0.72],
+          [-bs * 0.36, -bs * 1.38],
+          [-bs * 0.2, -bs * 1.54],
+          [bs * 0.2, -bs * 1.54],
+          [bs * 0.36, -bs * 1.38],
+          [bs * 0.3, -bs * 0.72],
+        ],
+        true
+      );
+      x.fill();
+      x.stroke();
+
+      x.strokeStyle = '#0e1011';
+      x.lineWidth = bs * 0.1;
+      x.beginPath();
+      x.moveTo(-bs * 0.23, -bs * 1.45);
+      x.lineTo(-bs * 0.36, -bs * 1.28);
+      x.moveTo(bs * 0.23, -bs * 1.45);
+      x.lineTo(bs * 0.36, -bs * 1.28);
+      x.stroke();
+
+      x.strokeStyle = '#1b1f22';
+      x.lineWidth = bs * 0.04;
+      x.beginPath();
+      x.moveTo(-bs * 0.4, -bs * 1.28);
+      x.lineTo(bs * 0.4, -bs * 1.28);
+      x.stroke();
+
+      x.lineWidth = lw;
+      x.fillStyle = '#101315';
+      x.strokeStyle = '#1f2427';
+      E(0, -bs * 1.68, bs * 0.17, bs * 0.19);
+
+      x.strokeStyle = `rgba(45,255,110,${0.25 + 0.6 * gl})`;
+      x.lineWidth = Math.max(1, bs * 0.02);
+      x.beginPath();
+      x.arc(0, -bs * 1.68, bs * 0.13, Math.PI * 1.1, Math.PI * 1.55);
+      x.stroke();
+      x.restore();
+    };
+
+    const draw = () => {
+      const v = simRef.current.v;
+      const off = simRef.current.off;
+      const { cx, vy, by, bs } = getSceneCoords();
+      const sw = Math.max(W * 0.85, H * 0.75);
+
+      x.fillStyle = '#121314';
+      x.fillRect(0, 0, W, H);
+
+      const g = x.createRadialGradient(cx, vy, 0, cx, vy, W * 0.68);
+      g.addColorStop(0, `rgba(45,255,110,${0.11 + 0.3 * v})`);
+      g.addColorStop(1, 'rgba(45,255,110,0)');
+      x.fillStyle = g;
+      x.fillRect(0, 0, W, H);
+
+      x.fillStyle = '#17191b';
+      x.beginPath();
+      x.moveTo(cx, vy);
+      x.lineTo(cx - sw, H);
+      x.lineTo(cx + sw, H);
+      x.fill();
+
+      x.save();
+      x.shadowColor = '#2dff6e';
+      x.shadowBlur = 10 + 18 * v;
+      x.strokeStyle = '#2dff6e';
+      x.lineWidth = 2;
+      x.beginPath();
+      x.moveTo(cx, vy);
+      x.lineTo(cx - sw, H);
+      x.moveTo(cx, vy);
+      x.lineTo(cx + sw, H);
+      x.stroke();
+      x.restore();
+
+      x.fillStyle = '#e4e8ea';
+      for (let i = 0; i < 14; i++) {
+        const z = (i / 14 + off) % 1;
+        const p = Math.pow(z, 2.4);
+        const y = vy + (H - vy) * p;
+        const w = 1 + 14 * p;
+        const h = (4 + 90 * p) * (0.6 + v);
+        x.fillRect(cx - w / 2, y, w, h);
+      }
+
       if (v > 0.3) {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${(v - 0.3) * 0.48})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
+        x.strokeStyle = `rgba(255,255,255,${(v - 0.3) * 0.5})`;
+        x.lineWidth = 1;
+        x.beginPath();
         for (let i = 0; i < 34; i++) {
           const a = (((i * 137.5) % 360) * Math.PI) / 180;
           const r = (i * 0.173 + off * 3) % 1;
-          const sx = cx + Math.cos(a) * width * 0.12 * (1 + r);
-          const sy = vy + Math.sin(a) * height * 0.12 * (1 + r);
-          const L = r * r * height * 0.7 * v;
-          ctx.moveTo(sx, sy);
-          ctx.lineTo(sx + Math.cos(a) * L, sy + Math.sin(a) * L);
+          const sx = cx + Math.cos(a) * W * 0.12 * (1 + r);
+          const sy = vy + Math.sin(a) * H * 0.12 * (1 + r);
+          const L = r * r * H * 0.7 * v;
+          x.moveTo(sx, sy);
+          x.lineTo(sx + Math.cos(a) * L, sy + Math.sin(a) * L);
         }
-        ctx.stroke();
+        x.stroke();
       }
 
-      // Rider & Electric Bike silhouette
-      const bs = Math.max(68, Math.min(width * 0.17, height * 0.19));
-      const by = height * 0.79;
-      const t = performance.now() / 1000;
-      const lv = Math.max(0, v - 0.07) / 0.93;
-      const lean = lv * 0.05 * Math.sin(t * 1.6) + lv * 0.008 * Math.sin(t * 41);
-      const sh = lv * 1.6 * Math.sin(t * 37);
-      const gl = 0.25 + 0.75 * lv;
-      const lw = Math.max(1, bs * 0.012);
+      // Smoothly fade the bottom road dashes before the interaction dock at rest,
+      // and lift the fade when holding accelerate so the full-screen road rushes past!
+      const runFactor = Math.max(0, Math.min(1, (v - 0.07) / 0.93));
+      const dockFadeAlpha = Math.max(0, 1 - runFactor * 0.92);
+      if (dockFadeAlpha > 0.01) {
+        const fadeStartY = W <= 700 ? H * 0.71 : H * 0.82;
+        const bf = x.createLinearGradient(0, fadeStartY, 0, H);
+        bf.addColorStop(0, 'rgba(18,19,20,0)');
+        bf.addColorStop(0.55, `rgba(18,19,20,${(0.92 * dockFadeAlpha).toFixed(3)})`);
+        bf.addColorStop(1, `rgba(18,19,20,${dockFadeAlpha.toFixed(3)})`);
+        x.fillStyle = bf;
+        x.fillRect(0, fadeStartY, W, H - fadeStartY);
+      }
 
-      const drawRoundRect = (rx: number, ry: number, rw: number, rh: number, rad: number) => {
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(rx, ry, rw, rh, rad);
-        } else {
-          ctx.rect(rx, ry, rw, rh);
-        }
-      };
-
-      const drawEllipse = (ex: number, ey: number, erx: number, ery: number) => {
-        ctx.beginPath();
-        ctx.ellipse(ex, ey, erx, ery, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-      };
-
-      ctx.save();
-      ctx.translate(cx, by);
-
-      // Ground reflection under tire
-      const rg = ctx.createRadialGradient(0, bs * 0.08, 0, 0, bs * 0.08, bs * 0.8);
-      rg.addColorStop(0, `rgba(45, 255, 110, ${0.16 + 0.5 * lv})`);
-      rg.addColorStop(1, 'rgba(45, 255, 110, 0)');
-      ctx.fillStyle = rg;
-      ctx.beginPath();
-      ctx.ellipse(0, bs * 0.08, bs * 0.8, bs * 0.2, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Headlight beam forward
-      const far = (by - vy) * 0.85;
-      const bm = ctx.createLinearGradient(0, -bs * 0.5, 0, -far);
-      bm.addColorStop(0, `rgba(225, 255, 238, ${0.04 + 0.32 * lv})`);
-      bm.addColorStop(1, 'rgba(225, 255, 238, 0)');
-      ctx.fillStyle = bm;
-      ctx.beginPath();
-      ctx.moveTo(-bs * 0.32, -bs * 0.5);
-      ctx.lineTo(bs * 0.32, -bs * 0.5);
-      ctx.lineTo(bs * 0.05, -far);
-      ctx.lineTo(-bs * 0.05, -far);
-      ctx.fill();
-
-      ctx.translate(sh, 0);
-      ctx.rotate(lean);
-      ctx.lineWidth = lw;
-      ctx.fillStyle = '#0b0c0d';
-      ctx.strokeStyle = '#1f2427';
-      drawEllipse(0, -bs * 0.3, bs * 0.075, bs * 0.3);
-
-      ctx.fillStyle = '#15181a';
-      drawRoundRect(-bs * 0.15, -bs * 0.78, bs * 0.3, bs * 0.34, bs * 0.05);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#1d2124';
-      drawRoundRect(-bs * 0.2, -bs * 0.92, bs * 0.4, bs * 0.16, bs * 0.05);
-      ctx.fill();
-      ctx.stroke();
-
-      // Rear LED tail bar
-      ctx.save();
-      ctx.shadowColor = '#2dff6e';
-      ctx.shadowBlur = 8 + 22 * gl;
-      ctx.fillStyle = '#2dff6e';
-      ctx.fillRect(-bs * 0.17, -bs * 0.86, bs * 0.34, bs * 0.035);
-      ctx.restore();
-
-      ctx.fillStyle = '#0e1011';
-      drawEllipse(-bs * 0.22, -bs * 1, bs * 0.09, bs * 0.17);
-      drawEllipse(bs * 0.22, -bs * 1, bs * 0.09, bs * 0.17);
-
-      ctx.beginPath();
-      ctx.moveTo(-bs * 0.14, -bs * 0.95);
-      ctx.lineTo(bs * 0.14, -bs * 0.95);
-      ctx.lineTo(bs * 0.25, -bs * 1.5);
-      ctx.lineTo(-bs * 0.25, -bs * 1.5);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#0e1011';
-      ctx.lineWidth = bs * 0.1;
-      ctx.beginPath();
-      ctx.moveTo(-bs * 0.23, -bs * 1.45);
-      ctx.lineTo(-bs * 0.36, -bs * 1.28);
-      ctx.moveTo(bs * 0.23, -bs * 1.45);
-      ctx.lineTo(bs * 0.36, -bs * 1.28);
-      ctx.stroke();
-
-      ctx.strokeStyle = '#1b1f22';
-      ctx.lineWidth = bs * 0.04;
-      ctx.beginPath();
-      ctx.moveTo(-bs * 0.4, -bs * 1.28);
-      ctx.lineTo(bs * 0.4, -bs * 1.28);
-      ctx.stroke();
-
-      ctx.lineWidth = lw;
-      ctx.fillStyle = '#101315';
-      ctx.strokeStyle = '#1f2427';
-      drawEllipse(0, -bs * 1.68, bs * 0.17, bs * 0.19);
-
-      ctx.strokeStyle = `rgba(45, 255, 110, ${0.25 + 0.6 * gl})`;
-      ctx.lineWidth = Math.max(1, bs * 0.02);
-      ctx.beginPath();
-      ctx.arc(0, -bs * 1.68, bs * 0.13, Math.PI * 1.1, Math.PI * 1.55);
-      ctx.stroke();
-      ctx.restore();
+      bike(cx, by, bs);
     };
 
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = cv.clientWidth;
-      height = cv.clientHeight;
-      cv.width = width * dpr;
-      cv.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawScene();
+    const rs = () => {
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      W = cv.clientWidth;
+      H = cv.clientHeight;
+      cv.width = W * d;
+      cv.height = H * d;
+      x.setTransform(d, 0, 0, d, 0, 0);
+      draw();
     };
 
     const loop = () => {
-      const st = stateRef.current;
-      if (st.isVisible) {
-        st.velocity += (st.targetVelocity - st.velocity) * 0.045;
-        if (!prefersReducedMotion) {
-          st.offset = (st.offset + st.velocity * 0.018) % 1;
+      const st = simRef.current;
+      if (st.vis) {
+        st.v += (st.tg - st.v) * 0.045;
+        if (!R) {
+          st.off = (st.off + st.v * 0.018) % 1;
         }
-        const computedSpeed = Math.round((Math.max(0, st.velocity - 0.07) / 0.93) * 85);
-        if (computedSpeed !== lastReportedSpeed) {
-          lastReportedSpeed = computedSpeed;
-          setSpeedKmh(computedSpeed);
+        const s = Math.round(((Math.max(0, st.v - 0.07) / 0.93) * 85));
+        if (s !== st.sp) {
+          st.sp = s;
+          numEl.textContent = String(s);
+          if (sndRef.current) {
+            const norm = Math.max(0, Math.min(1, s / 85));
+            sndRef.current.style.setProperty('--snd-level', norm.toFixed(2));
+          }
         }
-        if (!prefersReducedMotion || Math.abs(st.targetVelocity - st.velocity) > 0.002) {
-          drawScene();
+        hero.classList.toggle('speed-mid', s >= 8 && s < 48);
+        hero.classList.toggle('speed-high', s >= 48);
+        if (!R || Math.abs(st.tg - st.v) > 0.002) {
+          draw();
         }
       }
 
-      if (audioRef.current) {
-        const a = audioRef.current;
-        const T = a.ctx.currentTime;
-        const L = Math.max(0, Math.min(1, (st.velocity - 0.07) / 0.93));
-        const amp = Math.min(1, L * 5);
-        const freq = 210 + L * 1750;
-        const shouldPlay = !st.soundMuted && st.isVisible && !document.hidden && L > 0.01;
+      const nodes = audioNodesRef.current;
+      if (nodes) {
+        const T = nodes.ac.currentTime;
+        const L = Math.max(0, Math.min(1, (st.v - 0.07) / 0.93));
+        const a = Math.min(1, L * 5);
+        const f = 210 + L * 1750;
 
-        a.master.gain.setTargetAtTime(shouldPlay ? 0.85 : 0, T, 0.05);
-        a.wA.frequency.setTargetAtTime(freq, T, 0.05);
-        a.wB.frequency.setTargetAtTime(freq * 2.01, T, 0.05);
-        a.hum.frequency.setTargetAtTime(48 + L * 150, T, 0.06);
-        a.nf2.frequency.setTargetAtTime(500 + L * 2300, T, 0.08);
+        nodes.master.gain.setTargetAtTime(
+          st.mute || !st.vis || document.hidden ? 0 : 0.9,
+          T,
+          0.05
+        );
+        nodes.wA.frequency.setTargetAtTime(f, T, 0.05);
+        nodes.wB.frequency.setTargetAtTime(f * 2.01, T, 0.05);
+        nodes.hum.frequency.setTargetAtTime(48 + L * 150, T, 0.06);
+        nodes.nf2.frequency.setTargetAtTime(500 + L * 2300, T, 0.08);
 
-        a.gA.gain.setTargetAtTime(0.06 * amp, T, 0.06);
-        a.gB.gain.setTargetAtTime(0.03 * amp, T, 0.09);
-        a.gH.gain.setTargetAtTime(0.08 * amp, T, 0.06);
-        a.gN.gain.setTargetAtTime(0.06 * Math.pow(L, 1.2), T, 0.08);
+        nodes.gA.gain.setTargetAtTime(0.06 * a, T, 0.06);
+        nodes.gB.gain.setTargetAtTime(0.03 * a, T, 0.09);
+        nodes.gH.gain.setTargetAtTime(0.08 * a, T, 0.06);
+        nodes.gN.gain.setTargetAtTime(0.06 * Math.pow(L, 1.2), T, 0.08);
 
         const A = 0.15 * Math.pow(L, 0.9);
-        a.gT.gain.setTargetAtTime(A * 0.7, T, 0.08);
-        a.tlg.gain.setTargetAtTime(A * 0.3, T, 0.08);
-        a.tlfo.frequency.setTargetAtTime(5 + L * 32, T, 0.08);
-        a.tlp.frequency.setTargetAtTime(350 + L * 900, T, 0.08);
-        a.gS.gain.setTargetAtTime(0.04 * Math.pow(L, 1.3), T, 0.08);
+        nodes.gT.gain.setTargetAtTime(A * 0.7, T, 0.08);
+        nodes.tlg.gain.setTargetAtTime(A * 0.3, T, 0.08);
+        nodes.tlfo.frequency.setTargetAtTime(5 + L * 32, T, 0.08);
+        nodes.tlp.frequency.setTargetAtTime(350 + L * 900, T, 0.08);
+        nodes.gS.gain.setTargetAtTime(0.04 * Math.pow(L, 1.3), T, 0.08);
       }
 
       rafId = requestAnimationFrame(loop);
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        stateRef.current.isVisible = entries[0]?.isIntersecting ?? true;
-        if (!stateRef.current.isVisible) {
-          setIsHolding(false);
-        }
-      },
-      { threshold: 0.05 }
-    );
-    observer.observe(heroEl);
+    // Native Hold Handler (matches mockup go(on))
+    const go = (on: boolean) => {
+      if (on) {
+        aud();
+        if (navigator.vibrate) navigator.vibrate(8);
+      }
+      simRef.current.held = on;
+      simRef.current.tg = on ? 1 : 0.07;
+      hero.classList.toggle('run', on);
+      setIsAccelerating(on);
+    };
 
-    window.addEventListener('resize', resize);
-    resize();
+    const onPointerDown = (e: PointerEvent) => {
+      e.preventDefault();
+      try {
+        thr.setPointerCapture(e.pointerId);
+      } catch {}
+      go(true);
+    };
+
+    const onPointerRelease = () => go(false);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        go(true);
+      }
+    };
+
+    const onKeyUp = () => go(false);
+    const onBlur = () => go(false);
+    const onContextMenu = (e: Event) => e.preventDefault();
+    const onVisibilityChange = () => {
+      if (document.hidden) go(false);
+    };
+
+    // One-time audio unlock on hero tap for mobile Safari/Chrome
+    const unlockHeroAudio = () => {
+      aud();
+    };
+    hero.addEventListener('pointerdown', unlockHeroAudio, { once: true });
+
+    thr.addEventListener('pointerdown', onPointerDown);
+    thr.addEventListener('pointerup', onPointerRelease);
+    thr.addEventListener('pointercancel', onPointerRelease);
+    thr.addEventListener('lostpointercapture', onPointerRelease);
+    thr.addEventListener('keydown', onKeyDown);
+    thr.addEventListener('keyup', onKeyUp);
+    thr.addEventListener('blur', onBlur);
+    thr.addEventListener('contextmenu', onContextMenu);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    const obs = new IntersectionObserver((entries) => {
+      const isIntersecting = entries[0]?.isIntersecting ?? true;
+      simRef.current.vis = isIntersecting;
+      if (!isIntersecting) go(false);
+    });
+    obs.observe(hero);
+
+    window.addEventListener('resize', rs);
+    rs();
     rafId = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(rafId);
-      observer.disconnect();
-      window.removeEventListener('resize', resize);
+      obs.disconnect();
+      window.removeEventListener('resize', rs);
+      hero.removeEventListener('pointerdown', unlockHeroAudio);
+      thr.removeEventListener('pointerdown', onPointerDown);
+      thr.removeEventListener('pointerup', onPointerRelease);
+      thr.removeEventListener('pointercancel', onPointerRelease);
+      thr.removeEventListener('lostpointercapture', onPointerRelease);
+      thr.removeEventListener('keydown', onKeyDown);
+      thr.removeEventListener('keyup', onKeyUp);
+      thr.removeEventListener('blur', onBlur);
+      thr.removeEventListener('contextmenu', onContextMenu);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
-  }, []);
+  }, [aud]);
 
-  const startHold = () => {
-    initAudio();
-    if (navigator.vibrate) navigator.vibrate(10);
-    setCruiseTarget(null);
-    setIsHolding(true);
+  const handleToggleSound = () => {
+    const nextMuted = !simRef.current.mute;
+    simRef.current.mute = nextMuted;
+    if (!nextMuted) {
+      aud();
+    }
+    setSoundState((prev) =>
+      prev === 'fail' ? 'fail' : nextMuted ? 'muted' : 'on'
+    );
   };
 
-  const stopHold = () => {
-    setIsHolding(false);
-  };
-
-  const selectCruise = (val: number | null) => {
-    initAudio();
-    setIsHolding(false);
-    setCruiseTarget((prev) => (prev === val ? null : val));
-  };
-
-  const isAccelerating = isHolding || cruiseTarget !== null;
+  const soundText =
+    soundState === 'on'
+      ? lang === 'ar'
+        ? 'الصوت يعمل'
+        : 'Son activé'
+      : soundState === 'muted'
+      ? lang === 'ar'
+        ? 'الصوت مكتوم'
+        : 'Son coupé'
+      : lang === 'ar'
+      ? 'الصوت غير متوفر'
+      : 'Son indisponible';
 
   return (
-    <section
-      ref={heroRef}
-      id="hero"
-      className="relative min-h-[calc(100svh-64px)] flex flex-col justify-between overflow-hidden border-b border-[#262b2f]"
-    >
-      {/* Interactive Canvas Background */}
-      <canvas
-        ref={canvasRef}
-        aria-hidden="true"
-        className={`absolute inset-0 w-full h-full block transition-all duration-300 ${
-          isAccelerating ? 'saturate-125 brightness-110' : ''
-        }`}
-      />
+    <div className="hero" id="hero" ref={heroRef}>
+      <canvas id="road" ref={canvasRef} aria-hidden="true" />
 
-      {/* Measured Contrast Scrim that opens up when accelerating */}
-      <div
-        aria-hidden="true"
-        className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
-          isAccelerating ? 'opacity-65' : 'opacity-95'
-        }`}
-        style={{
-          background:
-            lang === 'ar'
-              ? 'linear-gradient(270deg, rgba(13,15,16,0.95) 0%, rgba(13,15,16,0.78) 48%, rgba(13,15,16,0.25) 100%), linear-gradient(0deg, rgba(13,15,16,0.96) 0%, transparent 52%)'
-              : 'linear-gradient(90deg, rgba(13,15,16,0.95) 0%, rgba(13,15,16,0.78) 48%, rgba(13,15,16,0.25) 100%), linear-gradient(0deg, rgba(13,15,16,0.96) 0%, transparent 52%)',
-        }}
-      />
-
-      {/* Top Hero Utility Bar: Regional Identity + Live Showroom Status + Language Switcher */}
-      <div className="relative z-10 w-full max-w-[1160px] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[#9aa2a9]">
-          <span className="font-semibold text-[#f2f4f3]">NeoRide by Zelloufi</span>
-          <span aria-hidden="true">·</span>
-          <span>{lang === 'ar' ? 'بركان والجهة الشرقية' : 'Berkane & Région de l’Oriental'}</span>
-          <span aria-hidden="true" className="hidden sm:inline">·</span>
-          <a
-            href="#localisation"
-            className="hidden sm:inline-flex items-center gap-1.5 text-[#d0d6dc] hover:text-[#2dff6e] transition-colors"
-          >
-            <span className="font-medium">
-              {showroomStatus.isOpen
-                ? lang === 'ar'
-                  ? 'المعرض مفتوح الآن (9:00–19:30)'
-                  : 'Showroom ouvert (9h–19h30)'
-                : lang === 'ar'
-                ? 'المعرض مغلق حاليًا (يفتح 9:00)'
-                : 'Showroom fermé (ouvre à 9h00)'}
-            </span>
-          </a>
+      <div className="wrap hero-layout">
+        <div aria-hidden="true" className="spd">
+          <div className="num" id="n" ref={numRef}>
+            0
+          </div>
+          <span>{lang === 'ar' ? 'كم/س' : 'km/h'}</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              onSelectCategory('piece');
-              document.getElementById('catalogue')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#d0d6dc] hover:text-[#2dff6e] border border-[#262b2f] bg-[#141719]/80 rounded transition-colors whitespace-nowrap shrink-0"
-          >
-            {lang === 'ar' ? 'قطع الغيار والخوذات' : 'Pièces & Casques'}
-          </button>
-
-          <button
-            type="button"
-            onClick={onToggleLang}
-            aria-label={lang === 'ar' ? 'Passer en français' : 'التبديل إلى العربية'}
-            className="inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-[#f2f4f3] bg-[#1a1e21] hover:bg-[#2dff6e] hover:text-[#05150b] border border-[#2e3438] rounded transition-colors cursor-pointer whitespace-nowrap shrink-0"
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span>{lang === 'ar' ? 'Français' : 'العربية'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Split Content + Speedometer */}
-      <div className="relative z-10 w-full max-w-[1160px] mx-auto px-4 sm:px-6 my-auto py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-        {/* Left Column: Primary Proposition & Actions */}
-        <div
-          className={`lg:col-span-7 transition-opacity duration-300 ${
-            isAccelerating ? 'opacity-80 sm:opacity-70' : 'opacity-100'
-          }`}
-        >
-          <p className="text-xs sm:text-sm font-medium text-[#2dff6e] mb-3 tracking-wide">
-            {lang === 'ar'
-              ? 'صفر بنزين · بطارية قابلة للإزالة · خدمة ما بعد البيع في بركان'
-              : '0 DH d’essence · Batterie amovible 220V · Atelier local à Berkane'}
+        <div className="hero-copy">
+          <p className="eyebrow">
+            NEORIDE <span>·</span>{' '}
+            {lang === 'ar' ? 'بركان · 0 درهم بنزين' : 'BERKANE · 0 DH D’ESSENCE'}
           </p>
 
-          <h1 className="text-silver font-display font-extrabold text-[clamp(2.25rem,5vw,4rem)] leading-[1.04] tracking-tight max-w-[16ch] mb-4">
+          <h1 className="si">
             {lang === 'ar'
               ? 'دراجات وسكوترات كهربائية في بركان وجهة الشرق.'
               : 'Motos & scooters électriques à Berkane et dans l’Oriental.'}
           </h1>
 
-          <p className="text-[#c5ccd0] text-base sm:text-lg leading-relaxed max-w-[50ch] mb-7">
+          <p className="hero-lead">
             {lang === 'ar'
-              ? 'اكتشفوا الدراجات والسكوترات الكهربائية المصممة لتنقلاتكم اليومية وللموزعين المحترفين، مع قطع الغيار ومواكبة محلية في بركان، وجدة، الناظور والسعيدية.'
-              : 'Passez à l’électrique pour vos trajets quotidiens ou la livraison pro : 2 à 3 DH la recharge sur prise domestique, zéro vidange et un suivi réel au showroom de Berkane.'}
+              ? 'وفّر حتى 8\u00a0500 درهم سنويًا. شحن منزلي عادي (220V)، ضمان وقطع غيار متوفرة في بركان.'
+              : 'Économisez jusqu’à 8\u00a0500 DH/an. Recharge sur prise 220V normale (~1,5 DH / 100 km), garantie et SAV local à Berkane.'}
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-            <a
-              href="#catalogue"
-              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 bg-[#2dff6e] hover:bg-white text-[#05150b] font-bold text-sm sm:text-base rounded transition-colors whitespace-nowrap shrink-0 shadow-[0_8px_28px_rgba(45,255,110,0.18)]"
-            >
-              <span>{lang === 'ar' ? 'اكتشف الكتالوج والأسعار' : 'Découvrir le catalogue'}</span>
-              <ArrowUpRight className="w-4 h-4 flip-rtl" />
+          <div className="cta">
+            <a className="btn btn-g" href="#catalogue">
+              {lang === 'ar' ? 'شوف الكتالوج والأسعار' : 'Découvrir le catalogue'}{' '}
+              <span className="arr" aria-hidden="true">
+                ↗
+              </span>
             </a>
-
-            <a
-              href="#essai"
-              className="inline-flex items-center justify-center gap-2 min-h-[48px] px-5 py-3 bg-[#1a1e21]/90 hover:bg-[#262b2f] text-[#f2f4f3] border border-[#2e3438] font-semibold text-sm sm:text-base rounded transition-colors whitespace-nowrap shrink-0"
-            >
-              <span>{lang === 'ar' ? 'احجز تجربة مجانية' : 'Réserver un essai'}</span>
-              <ArrowRight className="w-4 h-4 flip-rtl text-[#2dff6e]" />
-            </a>
-
-            <a
-              href="#electrique"
-              className="inline-flex items-center gap-1.5 min-h-[44px] px-2 text-sm font-semibold text-[#c5ccd0] hover:text-[#2dff6e] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-            >
-              <span>{lang === 'ar' ? 'احسب توفيرك السنوي' : 'Calculer mes économies'}</span>
+            <a className="link" href="#essai">
+              {lang === 'ar' ? 'جرّب الموطور فبركان' : 'Réserver un essai'}{' '}
+              <span className="arr" aria-hidden="true">
+                →
+              </span>
             </a>
           </div>
-        </div>
 
-        {/* Right Column: Live Speedometer + Interactive Electric Throttle Module */}
-        <div className="lg:col-span-5 flex flex-col items-start lg:items-end justify-end">
-          {/* Speed Readout */}
-          <div className="mb-4 lg:text-end select-none" aria-live="off">
-            <div className="flex items-baseline gap-2 lg:justify-end">
-              <span
-                className={`font-display font-extrabold text-[clamp(3.5rem,9vw,6.25rem)] leading-none tabular-nums bidi-plain transition-colors duration-200 ${
-                  speedKmh >= 48
-                    ? 'text-[#2dff6e] drop-shadow-[0_0_28px_rgba(45,255,110,0.45)]'
-                    : speedKmh >= 8
-                    ? 'text-white'
-                    : 'text-[#6e777d]'
-                }`}
-              >
-                {speedKmh}
+          <div className="hero-interaction">
+            <div className="interaction-copy">
+              <span className="interaction-icon" aria-hidden="true">
+                ↯
               </span>
-              <span className="text-sm sm:text-base font-mono-num text-[#9aa2a9] uppercase">
-                {lang === 'ar' ? 'كم/س' : 'km/h'}
+              <span>
+                <strong>
+                  {lang === 'ar'
+                    ? 'جرّب تجربة التنقل الكهربائي'
+                    : 'Essayez l’expérience électrique'}
+                </strong>
+                <small>
+                  {lang === 'ar'
+                    ? 'اضغط باستمرار للتسارع'
+                    : 'Maintenez pour accélérer'}
+                </small>
               </span>
             </div>
-            <p className="text-xs text-[#9aa2a9] mt-1">
-              {speedKmh > 0
-                ? lang === 'ar'
-                  ? `استهلاك فوري: ~${(0.03 + (speedKmh / 85) * 0.03).toFixed(2)} درهم/كم · بدون ضجيج`
-                  : `Conso estimée : ~${(0.03 + (speedKmh / 85) * 0.03).toFixed(2)} DH/km · 0 émission`
-                : lang === 'ar'
-                ? 'اضغط مطوّلًا على مقبض التسارع أو اختر وضع السرعة'
-                : 'Maintenez l’accélérateur ou testez un mode de vitesse'}
-            </p>
-          </div>
 
-          {/* Interactive Throttle Card */}
-          <div className="w-full max-w-[440px] p-4 rounded bg-[#141719]/90 border border-[#262b2f] backdrop-blur-md">
-            <div className="flex items-center justify-between gap-2 mb-3">
-              <span className="text-xs font-semibold text-[#d0d6dc]">
-                {lang === 'ar' ? 'محاكاة التسارع الكهربائي' : 'Simulateur de couple électrique'}
-              </span>
-
+            <div className="interaction-controls">
               <button
+                aria-label={
+                  lang === 'ar'
+                    ? 'اضغط باستمرار للتسارع'
+                    : 'Maintenir pour accélérer'
+                }
+                className="thr"
+                id="thr"
+                ref={thrRef}
                 type="button"
-                onClick={() => {
-                  initAudio();
-                  setSoundEnabled((prev) => !prev);
-                }}
-                aria-pressed={soundEnabled}
-                className={`inline-flex items-center gap-1.5 min-h-[34px] px-2.5 py-1 text-xs font-medium rounded border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                  audioUnavailable
-                    ? 'border-[#3a3f44] text-[#9aa2a9]'
-                    : soundEnabled
-                    ? 'border-[#2dff6e]/40 bg-[#2dff6e]/10 text-[#2dff6e]'
-                    : 'border-[#ff6b6b]/40 bg-[#ff6b6b]/10 text-[#ff9a9a]'
-                }`}
               >
-                {soundEnabled && !audioUnavailable ? (
-                  <Volume2 className="w-3.5 h-3.5" />
-                ) : (
-                  <VolumeX className="w-3.5 h-3.5" />
-                )}
+                <i>
+                  <svg viewBox="0 0 24 24">
+                    <path d="M13 2L5 14h6l-1 8 9-13h-6z" />
+                  </svg>
+                </i>
                 <span>
-                  {audioUnavailable
-                    ? lang === 'ar'
-                      ? 'الصوت غير متاح'
-                      : 'Son indisponible'
-                    : soundEnabled
-                    ? lang === 'ar'
-                      ? 'الصوت مفعّل'
-                      : 'Son moteur actif'
-                    : lang === 'ar'
-                    ? 'الصوت مكتوم'
-                    : 'Son coupé'}
-                </span>
-              </button>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-              {/* Hold-to-accelerate button */}
-              <button
-                type="button"
-                onPointerDown={(e) => {
-                  e.currentTarget.setPointerCapture(e.pointerId);
-                  startHold();
-                }}
-                onPointerUp={stopHold}
-                onPointerCancel={stopHold}
-                onLostPointerCapture={stopHold}
-                onKeyDown={(e) => {
-                  if (e.key === ' ' || e.key === 'Enter') {
-                    e.preventDefault();
-                    startHold();
-                  }
-                }}
-                onKeyUp={stopHold}
-                onBlur={stopHold}
-                onContextMenu={(e) => e.preventDefault()}
-                className={`flex-1 flex items-center justify-center gap-2.5 min-h-[46px] px-4 py-2 rounded font-bold text-xs sm:text-sm border transition-all cursor-pointer select-none touch-none whitespace-nowrap ${
-                  isHolding
-                    ? 'bg-[#2dff6e] text-[#05150b] border-[#2dff6e] shadow-[0_0_24px_rgba(45,255,110,0.45)] scale-[0.99]'
-                    : 'bg-[#1f2428] hover:bg-[#282e33] text-[#f2f4f3] border-[#32393f]'
-                }`}
-              >
-                <span
-                  className={`w-7 h-7 rounded-full grid place-items-center transition-transform ${
-                    isHolding ? 'bg-[#05150b] text-[#2dff6e] scale-110' : 'bg-[#2dff6e] text-[#05150b]'
-                  }`}
-                >
-                  <Zap className="w-4 h-4 fill-current" />
-                </span>
-                <span>
-                  {isHolding
-                    ? lang === 'ar'
-                      ? 'تسارع أقصى...'
-                      : 'Accélération...'
-                    : lang === 'ar'
+                  {lang === 'ar'
                     ? 'اضغط مطوّلًا للتسريع'
                     : 'Maintenir pour accélérer'}
                 </span>
               </button>
 
-              {/* Quick Cruise Mode Buttons for effortless mobile tap */}
-              <div className="flex items-center gap-1 bg-[#0d0f10] p-1 rounded border border-[#262b2f]" role="group" aria-label="Modes de vitesse">
-                {[
-                  { label: 'Eco', target: 0.52 },
-                  { label: 'Ville', target: 0.78 },
-                  { label: 'Sport', target: 1.0 },
-                ].map((m) => {
-                  const active = cruiseTarget === m.target && !isHolding;
-                  return (
-                    <button
-                      key={m.label}
-                      type="button"
-                      onClick={() => selectCruise(m.target)}
-                      className={`flex-1 sm:flex-initial min-h-[36px] px-2.5 text-xs font-semibold rounded transition-colors cursor-pointer whitespace-nowrap ${
-                        active
-                          ? 'bg-[#2dff6e] text-[#05150b]'
-                          : 'text-[#9aa2a9] hover:text-[#f2f4f3]'
-                      }`}
-                    >
-                      {m.label}
-                    </button>
-                  );
-                })}
-              </div>
+              <button
+                aria-pressed={soundState === 'on'}
+                className={`snd ${soundState === 'on' ? 'on' : 'off'}${
+                  soundState === 'on' && isAccelerating ? ' revving' : ''
+                }`}
+                id="snd"
+                ref={sndRef}
+                type="button"
+                onClick={handleToggleSound}
+              >
+                <span className="snd-pulse-dot" aria-hidden="true" />
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M4 9v6h4l5 4V5L8 9H4z" />
+                  <path className="w w-inner" d="M16 9a4 4 0 010 6" />
+                  <path className="w w-outer" d="M18.5 6.5a8 8 0 010 11" />
+                  <path className="x" d="M16 9l5 6M21 9l-5 6" />
+                </svg>
+                <span id="sndt">{soundText}</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Full-Width KPI & Regional Proof Bar */}
-      <div className="relative z-10 w-full bg-[#0d0f10]/90 border-t border-[#262b2f] backdrop-blur-sm">
-        <div className="max-w-[1160px] mx-auto px-4 sm:px-6 py-4 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div>
-            <div className="font-display font-bold text-lg sm:text-xl text-[#f2f4f3] tabular-nums bidi-plain">
-              {lang === 'ar' ? 'ابتداءً من 5\u00a0200 درهم' : 'Dès 5\u00a0200 DH'}
-            </div>
-            <div className="text-xs text-[#9aa2a9]">
-              {lang === 'ar' ? 'موطورات، سكوترات وتروتينيت' : 'Motos, scooters & trottinettes'}
-            </div>
-          </div>
-
-          <div>
-            <div className="font-display font-bold text-lg sm:text-xl text-[#2dff6e] tabular-nums bidi-plain">
-              {lang === 'ar' ? '40 إلى 90 كم' : '40 à 90 km'}
-            </div>
-            <div className="text-xs text-[#9aa2a9]">
-              {lang === 'ar' ? 'مدى السير بشحنة واحدة (2–3 دراهم)' : 'Autonomie par charge (~2 à 3 DH)'}
-            </div>
-          </div>
-
-          <div>
-            <div className="font-display font-bold text-lg sm:text-xl text-[#f2f4f3]">
-              {lang === 'ar' ? 'قطع الغيار والصيانة' : 'Pièces & Atelier local'}
-            </div>
-            <div className="text-xs text-[#9aa2a9]">
-              {lang === 'ar' ? 'متوفرة لدى زلّوفي في بركان' : 'Suivi après-vente assuré à Berkane'}
-            </div>
-          </div>
-
-          <div>
-            <div className="font-display font-bold text-lg sm:text-xl text-[#f2f4f3]">
-              {lang === 'ar' ? 'توصيل لجهة الشرق' : 'Expédition Oriental'}
-            </div>
-            <div className="text-xs text-[#9aa2a9]">
-              {lang === 'ar' ? 'وجدة، الناظور، السعيدية، تاوريرت وأحفير' : 'Oujda, Nador, Saïdia, Taourirt & Ahfir'}
-            </div>
-          </div>
-        </div>
+      <div className="trust">
+        <ul>
+          <li>
+            {lang === 'ar'
+              ? 'طرازات ابتداءً من 5\u00a0200 درهم'
+              : 'Modèles dès 5\u00a0200 DH'}
+          </li>
+          <li>{lang === 'ar' ? 'قطع الغيار متوفرة' : 'Pièces de rechange en stock'}</li>
+          <li>
+            {lang === 'ar'
+              ? 'خدمة ما بعد البيع محليًا'
+              : 'Service après-vente local'}
+          </li>
+          <li>
+            {lang === 'ar'
+              ? 'توصيل لبركان وجهة الشرق'
+              : 'Livraison Berkane & Oriental'}
+          </li>
+        </ul>
       </div>
-    </section>
+    </div>
   );
 };

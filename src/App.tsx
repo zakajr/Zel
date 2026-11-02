@@ -4,11 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Phone, ArrowUpRight } from 'lucide-react';
 import {
   Lang,
   ProductCategory,
   ProductItem,
+  PRODUCTS,
   FAQ_ITEMS,
   buildWhatsAppUrl,
 } from './data/neorideData';
@@ -22,68 +22,131 @@ export default function App() {
   const [lang, setLang] = useState<Lang>('fr');
   const [activeCategory, setActiveCategory] = useState<ProductCategory>('all');
   const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [curCarouselModelId, setCurCarouselModelId] = useState<string | null>('nr1-sport');
   const [isCompareModalOpen, setIsCompareModalOpen] = useState<boolean>(false);
   const [inspectedProduct, setInspectedProduct] = useState<ProductItem | null>(null);
   const [selectedTestRideModelId, setSelectedTestRideModelId] = useState<string>('nr1-sport');
   const [showMobileDock, setShowMobileDock] = useState<boolean>(false);
+  const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
 
-  // Sync HTML lang, dir, and document title
+  // Sync HTML lang, dir, and document title + meta description for SEO/GEO
   useEffect(() => {
     const isAr = lang === 'ar';
     document.documentElement.dir = isAr ? 'rtl' : 'ltr';
     document.documentElement.lang = isAr ? 'ar' : 'fr';
     document.title = isAr
-      ? 'NeoRide by Zelloufi — دراجات كهربائية وسكوترات وقطع غيار في بركان وجهة الشرق'
-      : 'NeoRide by Zelloufi — Motos électriques, scooters et pièces à Berkane et dans l’Oriental';
+      ? 'NeoRide — دراجات كهربائية وسكوترات وقطع غيار في بركان وجهة الشرق'
+      : 'NeoRide — Motos & Scooters Électriques à Berkane et dans l’Oriental';
   }, [lang]);
 
-  // Inject Schema.org JSON-LD for MotorcycleDealer & FAQPage
+  // Sync body classes for comparison tray and mobile dock padding
   useEffect(() => {
-    const dealerScript = document.createElement('script');
-    dealerScript.type = 'application/ld+json';
-    dealerScript.textContent = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'MotorcycleDealer',
-      name: 'NeoRide by Zelloufi',
-      areaServed: 'Oriental, Maroc',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Berkane',
-        addressCountry: 'MA',
-      },
-      telephone: '+212600000000',
-      openingHours: 'Mo-Sa 09:00-19:30',
-    });
+    document.body.classList.toggle('hastray', compareIds.length > 0 && !isCompareModalOpen);
+  }, [compareIds.length, isCompareModalOpen]);
 
-    const faqScript = document.createElement('script');
-    faqScript.type = 'application/ld+json';
-    faqScript.textContent = JSON.stringify({
+  useEffect(() => {
+    const isDockActive = showMobileDock && !isInputFocused && compareIds.length === 0;
+    document.body.classList.toggle('dockon', isDockActive);
+  }, [showMobileDock, isInputFocused, compareIds.length]);
+
+  // Inject comprehensive Schema.org @graph JSON-LD (MotorcycleDealer + Product ItemList + FAQPage) for SEO & GEO
+  useEffect(() => {
+    const seoGraphScript = document.createElement('script');
+    seoGraphScript.type = 'application/ld+json';
+    seoGraphScript.textContent = JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: FAQ_ITEMS.map((f) => ({
-        '@type': 'Question',
-        name: f.qFr,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: f.aFr,
+      '@graph': [
+        {
+          '@type': ['MotorcycleDealer', 'AutoPartsStore', 'LocalBusiness'],
+          '@id': `${window.location.origin}/#dealer`,
+          name: 'NeoRide',
+          description:
+            'Showroom de motos électriques, scooters électriques, trottinettes, casques homologués ECE 22.06 et pièces de rechange à Berkane et dans la région de l’Oriental (Oujda, Nador, Saïdia, Ahfir).',
+          url: window.location.origin,
+          telephone: '+212600000000',
+          priceRange: '5200 MAD - 14900 MAD',
+          currenciesAccepted: 'MAD',
+          paymentAccepted: 'Cash, Bank Transfer',
+          openingHours: 'Mo-Sa 09:00-19:30',
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Berkane',
+            addressRegion: 'Oriental',
+            addressCountry: 'MA',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: 34.92,
+            longitude: -2.32,
+          },
+          areaServed: [
+            { '@type': 'City', name: 'Berkane' },
+            { '@type': 'City', name: 'Oujda' },
+            { '@type': 'City', name: 'Nador' },
+            { '@type': 'City', name: 'Saïdia' },
+            { '@type': 'City', name: 'Ahfir' },
+            { '@type': 'AdministrativeArea', name: 'Oriental, Maroc' },
+          ],
         },
-      })),
+        {
+          '@type': 'ItemList',
+          name: 'Catalogue NeoRide — Motos, Scooters & Pièces Électriques',
+          itemListElement: PRODUCTS.map((p, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            item: {
+              '@type': 'Product',
+              name: p.name,
+              description: `${p.kickerFr} — ${p.idealForFr}. ${p.highlightsFr.join(', ')}.`,
+              brand: {
+                '@type': 'Brand',
+                name: 'NeoRide',
+              },
+              offers: {
+                '@type': 'Offer',
+                price: String(p.priceDh),
+                priceCurrency: 'MAD',
+                availability: 'https://schema.org/InStock',
+                seller: {
+                  '@type': 'Organization',
+                  name: 'NeoRide Berkane',
+                },
+              },
+              additionalProperty: p.specs.map((s) => ({
+                '@type': 'PropertyValue',
+                name: s.labelFr,
+                value: s.value,
+              })),
+            },
+          })),
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: FAQ_ITEMS.map((f) => ({
+            '@type': 'Question',
+            name: f.qFr,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: f.aFr,
+            },
+          })),
+        },
+      ],
     });
 
-    document.head.appendChild(dealerScript);
-    document.head.appendChild(faqScript);
-
+    document.head.appendChild(seoGraphScript);
     return () => {
-      dealerScript.remove();
-      faqScript.remove();
+      seoGraphScript.remove();
     };
   }, []);
 
-  // Show mobile bottom dock after scrolling past hero, hide when keyboard/input is focused
+  // Show mobile bottom dock & floating scroll-top button after scrolling past hero
   useEffect(() => {
     const onScroll = () => {
-      setShowMobileDock(window.scrollY > 480);
+      const y = window.scrollY;
+      setShowScrollTop(y > 360);
+      setShowMobileDock(y > 480);
     };
     const onFocusIn = (e: FocusEvent) => {
       const target = e.target as HTMLElement | null;
@@ -95,6 +158,7 @@ export default function App() {
       setIsInputFocused(false);
     };
 
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('focusin', onFocusIn);
     document.addEventListener('focusout', onFocusOut);
@@ -104,6 +168,19 @@ export default function App() {
       document.removeEventListener('focusout', onFocusOut);
     };
   }, []);
+
+  // Close modals on Escape key
+  useEffect(() => {
+    if (!isCompareModalOpen && !inspectedProduct) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsCompareModalOpen(false);
+        setInspectedProduct(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isCompareModalOpen, inspectedProduct]);
 
   const handleToggleLang = () => {
     setLang((prev) => (prev === 'fr' ? 'ar' : 'fr'));
@@ -145,67 +222,74 @@ export default function App() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#0d0f10] text-[#f2f4f3] flex flex-col">
-      {/* Skip to content link for accessibility */}
-      <a
-        href="#top"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#2dff6e] focus:text-[#05150b] focus:font-bold focus:rounded"
-      >
-        {lang === 'ar' ? 'انتقل إلى المحتوى' : 'Aller au contenu'}
-      </a>
+  const handlePartsNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setActiveCategory('piece');
+    const el = document.getElementById('catalogue');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
-      {/* Strict 3-Zone Top Bar Contract */}
-      <header className="sticky top-0 z-40 h-14 sm:h-16 bg-[#0d0f10]/95 border-b border-[#262b2f] backdrop-blur-md">
-        <div className="max-w-[1160px] h-full mx-auto px-4 sm:px-6 flex items-center justify-between gap-8">
-          {/* Zone 1: Single text element wordmark */}
+  const handleScrollToTop = () => {
+    if (navigator.vibrate) navigator.vibrate(8);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <>
+      {/* Sticky 68px Header — Compact WhatsApp Logo & Zero Mobile Horizontal Scroll */}
+      <header>
+        <div className="wrap bar">
+          {/* Left: White-Label NeoRide Logo */}
           <a
             href="#top"
-            className="font-logo font-black text-xl sm:text-2xl tracking-tight text-silver whitespace-nowrap shrink-0"
+            className="logo"
+            aria-label="NeoRide"
           >
-            NeoRide
+            <span className="si">NeoRide</span>
           </a>
 
-          {/* Zone 2: 4–5 concise single-line text navigation links */}
+          {/* Center: Clean Navigation Links */}
           <nav
+            className="main-nav"
             aria-label={lang === 'ar' ? 'التنقل الرئيسي' : 'Navigation principale'}
-            className="hidden md:flex items-center gap-7 text-sm font-medium text-[#9aa2a9]"
           >
             <a
               href="#catalogue"
-              className="hover:text-[#f2f4f3] transition-colors whitespace-nowrap shrink-0"
+              onClick={() => setActiveCategory('all')}
             >
               {lang === 'ar' ? 'الكتالوج' : 'Catalogue'}
             </a>
             <a
-              href="#quiz"
-              className="hover:text-[#f2f4f3] transition-colors whitespace-nowrap shrink-0"
+              href="#catalogue"
+              id="navp"
+              onClick={handlePartsNavClick}
             >
-              {lang === 'ar' ? 'الاختبار الذكي' : 'Conseiller'}
+              {lang === 'ar' ? 'قطع الغيار والإكسسوارات' : 'Pièces & Accessoires'}
             </a>
-            <a
-              href="#electrique"
-              className="hover:text-[#f2f4f3] transition-colors whitespace-nowrap shrink-0"
-            >
-              {lang === 'ar' ? 'حاسبة التوفير' : 'Économies'}
+            <a href="#electrique">
+              {lang === 'ar' ? 'لماذا الكهرباء؟' : 'Pourquoi l’Électrique'}
             </a>
-            <a
-              href="#essai"
-              className="hover:text-[#f2f4f3] transition-colors whitespace-nowrap shrink-0"
-            >
-              {lang === 'ar' ? 'حجز تجربة' : 'Essai'}
-            </a>
-            <a
-              href="#localisation"
-              className="hover:text-[#f2f4f3] transition-colors whitespace-nowrap shrink-0"
-            >
-              {lang === 'ar' ? 'المعرض' : 'Showroom'}
+            <a href="#localisation">
+              {lang === 'ar' ? 'الموقع' : 'Localisation'}
             </a>
           </nav>
 
-          {/* Zone 3: 1 primary action */}
-          <div className="flex items-center shrink-0">
+          {/* Right: Language Switcher + Compact 48x42px WhatsApp Icon Button */}
+          <div className="lg">
+            <button
+              id="lang"
+              type="button"
+              className="lang"
+              onClick={handleToggleLang}
+              aria-label="Changer de langue / تغيير اللغة"
+            >
+              {lang === 'ar' ? 'Français' : 'عربية'}
+            </button>
+
             <a
+              className="btn btn-g header-wa"
               href={buildWhatsAppUrl(
                 lang === 'ar'
                   ? 'السلام عليكم NeoRide، بغيت نطلب أو نعرف معلومات أكثر.'
@@ -213,22 +297,20 @@ export default function App() {
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 min-h-[38px] px-4 py-1.5 bg-[#2dff6e] hover:bg-white text-[#05150b] font-bold text-xs sm:text-sm rounded transition-colors whitespace-nowrap shrink-0"
+              aria-label={lang === 'ar' ? 'اطلب عبر واتساب' : 'Commander sur WhatsApp'}
+              title={lang === 'ar' ? 'اطلب عبر واتساب' : 'Commander sur WhatsApp'}
             >
-              <span>{lang === 'ar' ? 'تواصل عبر واتساب' : 'WhatsApp Showroom'}</span>
-              <ArrowUpRight className="w-3.5 h-3.5 flip-rtl" />
+              <svg className="wa-mark" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12.04 2a9.8 9.8 0 0 0-8.35 14.94L2.4 22l5.22-1.37A9.9 9.9 0 1 0 12.04 2Zm0 17.98a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.1.81.83-3.02-.2-.31a8.1 8.1 0 1 1 6.9 3.83Zm4.45-6.07c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.95-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.49.1-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.4h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.1.15 1.52.09.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z" />
+              </svg>
             </a>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main id="top" className="flex-1">
-        <ElectricRoadHero
-          lang={lang}
-          onToggleLang={handleToggleLang}
-          onSelectCategory={setActiveCategory}
-        />
+      <main id="top">
+        <ElectricRoadHero lang={lang} />
 
         <CatalogSection
           lang={lang}
@@ -236,15 +318,11 @@ export default function App() {
           onSelectCategory={setActiveCategory}
           compareIds={compareIds}
           onToggleCompare={handleToggleCompare}
+          onCarouselModelChange={setCurCarouselModelId}
           onInspectProduct={setInspectedProduct}
-          onBookTestRide={handleBookTestRide}
         />
 
-        <AdvisorQuizAndSavings
-          lang={lang}
-          onBookTestRide={handleBookTestRide}
-          onInspectProduct={setInspectedProduct}
-        />
+        <AdvisorQuizAndSavings lang={lang} />
 
         <ShowroomTestRideAndFaq
           lang={lang}
@@ -257,6 +335,7 @@ export default function App() {
       <CompareAndQuickViewModals
         lang={lang}
         compareIds={compareIds}
+        curCarouselModelId={curCarouselModelId}
         onRemoveCompare={handleRemoveCompare}
         onSetComparePair={handleSetComparePair}
         onClearCompare={handleClearCompare}
@@ -268,25 +347,38 @@ export default function App() {
         onBookTestRide={handleBookTestRide}
       />
 
-      {/* Mobile Sticky Bottom Dock (Only visible on mobile when scrolled past hero, no input focused, and compare tray inactive) */}
+      {/* Floating Scroll-Up Button (.scroll-top-btn) */}
+      <button
+        type="button"
+        className={`scroll-top-btn${showScrollTop && !isInputFocused ? ' visible' : ''}`}
+        onClick={handleScrollToTop}
+        aria-label={lang === 'ar' ? 'العودة إلى الأعلى' : 'Retour en haut'}
+        title={lang === 'ar' ? 'العودة إلى الأعلى' : 'Retour en haut'}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 19V5" />
+          <path d="M5 12l7-7 7 7" />
+        </svg>
+      </button>
+
+      {/* Mobile Sticky Bottom Dock (.dock) */}
       {showMobileDock && !isInputFocused && compareIds.length === 0 && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-[54px] px-3 bg-[#0d0f10]/95 border-t border-[#262b2f] backdrop-blur-md flex items-center gap-2">
-          <a
-            href="tel:+212600000000"
-            className="flex-1 inline-flex items-center justify-center gap-1.5 min-h-[38px] px-3 rounded bg-[#1a1e21] text-[#f2f4f3] border border-[#2e3438] text-xs font-semibold whitespace-nowrap"
-          >
-            <Phone className="w-3.5 h-3.5 text-[#2dff6e]" />
-            <span>{lang === 'ar' ? 'اتصل بالمعرض' : 'Appeler'}</span>
+        <div className="dock">
+          <a className="btn btn-o" href="tel:+212600000000">
+            {lang === 'ar' ? 'اتصل' : 'Appeler'}
           </a>
-
           <a
-            href="#essai"
-            className="flex-1 inline-flex items-center justify-center min-h-[38px] px-3 rounded bg-[#1a1e21] text-[#f2f4f3] border border-[#2e3438] text-xs font-semibold whitespace-nowrap"
-          >
-            {lang === 'ar' ? 'حجز تجربة' : 'Réserver essai'}
-          </a>
-
-          <a
+            className="btn btn-g"
             href={buildWhatsAppUrl(
               lang === 'ar'
                 ? 'السلام عليكم NeoRide، عندي سؤال.'
@@ -294,13 +386,11 @@ export default function App() {
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 inline-flex items-center justify-center gap-1 min-h-[38px] px-3 rounded bg-[#2dff6e] text-[#05150b] text-xs font-bold whitespace-nowrap"
           >
-            <span>{lang === 'ar' ? 'واتساب' : 'WhatsApp'}</span>
-            <ArrowUpRight className="w-3.5 h-3.5 flip-rtl" />
+            {lang === 'ar' ? 'واتساب' : 'WhatsApp'}
           </a>
         </div>
       )}
-    </div>
+    </>
   );
 }
